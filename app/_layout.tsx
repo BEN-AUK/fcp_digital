@@ -20,7 +20,11 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (!isVenueReady) return;
-    if (pathname === "/join") return;
+    // 授权链接 /join?t=xxx：允许未登录直接进入 join 页，完成后跳主界面。避免 usePathname 未同步时误判为 "/" 导致被重定向到登录。
+    const isJoinPage =
+      pathname === "/join" ||
+      (typeof window !== "undefined" && window.location?.pathname === "/join");
+    if (isJoinPage) return;
     if (pathname !== "/") return;
     // 唯一规则：已认证 → 主界面；未认证 → 登录。不经过员工选择。
     if (!isAuthenticated) {

@@ -2,6 +2,7 @@ import { Tabs } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useVenueStore } from "@/stores/venueStore";
 
 const TAB_ACTIVE = "#7F57F1";
 const TAB_INACTIVE = "#999999";
@@ -36,6 +37,7 @@ function TabIcon({
 
 export default function AppLayout() {
   const { t } = useTranslation();
+  const isVenueOwner = useVenueStore((s) => s.isAuthenticated);
 
   return (
     <Tabs
@@ -81,6 +83,7 @@ export default function AppLayout() {
           title: t("tabs.management"),
           tabBarLabel: t("tabs.management"),
           tabBarIcon: ({ focused }) => <TabIcon name="clipboard-outline" focused={focused} />,
+          href: isVenueOwner ? "/manage" : null,
         }}
       />
     </Tabs>
