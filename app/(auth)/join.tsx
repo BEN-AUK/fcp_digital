@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { View, Text, ActivityIndicator } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { getJoinTokenFromUrl, validateInviteToken } from "@/auth/inviteToken";
+import { getJoinTokenFromUrl, parseInviteTokenPayload } from "@/auth/inviteToken";
 import { useStaffStore } from "@/stores/staffStore";
 import type { StaffContext } from "@/types/auth";
 
@@ -17,25 +17,24 @@ export default function JoinScreen() {
     let cancelled = false;
 
     async function run() {
-      const token =
-        typeof params.t === "string"
-          ? params.t
-          : await getJoinTokenFromUrl();
-      if (!token?.trim()) {
+      const raw =
+        typeof params.t === "string" ? params.t : await getJoinTokenFromUrl();
+      const token = raw?.trim() ? decodeURIComponent(raw.trim()) : null;
+      if (!token) {
         if (!cancelled) setStatus("error");
         return;
       }
-      const validated = await validateInviteToken(token.trim());
+      const payload = parseInviteTokenPayload(token);
       if (cancelled) return;
-      if (!validated) {
+      if (!payload?.venueId) {
         setStatus("error");
         return;
       }
       const context: StaffContext = {
-        staffId: validated.staffId,
-        displayName: validated.staffName,
-        venueId: validated.venueId,
-        venueName: validated.venueName,
+        staffId: payload.staffId,
+        displayName: payload.displayName,
+        venueId: payload.venueId,
+        ...(payload.venueName != null && { venueName: payload.venueName }),
       };
       setStaff(context);
       setStatus("done");

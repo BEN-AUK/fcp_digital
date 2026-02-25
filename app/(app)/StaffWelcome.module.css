@@ -1,18 +1,18 @@
-/* Staff welcome: full-viewport centred text, kitchen-ready (large, readable) */
+/* Staff welcome: full-viewport centred, kitchen-ready (large text). */
 .container {
   min-height: 100dvh;
   min-height: 100vh;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   padding: 24px;
   box-sizing: border-box;
 }
 
 .message {
-  font-size: clamp(1.5rem, 5vw, 2.5rem);
+  font-size: 28px;
   font-weight: 600;
   text-align: center;
-  line-height: 1.4;
+  line-height: 1.35;
   color: #1a1a1a;
 }

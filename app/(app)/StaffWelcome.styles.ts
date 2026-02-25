@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-/** Staff welcome: full-viewport centred, kitchen-ready (large text). Mirrors StaffWelcome.module.css for RN. */
+/** Staff welcome: full-viewport centred, large font. Mirrors StaffWelcome.module.css for RN. */
 export const staffWelcomeStyles = StyleSheet.create({
   container: {
     flex: 1,

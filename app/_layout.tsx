@@ -19,7 +19,9 @@ export default function RootLayout() {
   const staff = useStaffStore((s) => s.staff);
 
   useEffect(() => {
-    if (!isVenueReady || pathname !== "/") return;
+    if (!isVenueReady) return;
+    if (pathname === "/join") return;
+    if (pathname !== "/") return;
     if (!isAuthenticated) {
       router.replace("/(auth)/login");
       return;

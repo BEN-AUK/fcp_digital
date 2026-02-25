@@ -7,6 +7,16 @@ const INVITE_EXPIRY_DAYS = 7;
 const INVITE_PARAM = "inviteToken";
 const JOIN_PARAM = "t";
 
+const JOIN_BASE_URL = "http://localhost:8081";
+
+/** Payload encoded in Mode B invite token (base64 JSON). */
+export type InviteTokenPayload = {
+  staffId: string;
+  displayName: string;
+  venueId?: string;
+  venueName?: string;
+};
+
 /** Get inviteToken from current URL (web: location.search; native: Linking.getInitialURL). */
 export async function getInviteTokenFromUrl(): Promise<string | null> {
   return getTokenParamFromUrl(INVITE_PARAM);
@@ -32,18 +42,40 @@ async function getTokenParamFromUrl(param: string): Promise<string | null> {
   }
 }
 
-/** Parse invite token payload (e.g. JWT or base64 JSON). For now we treat raw token as staffId for silent bind. */
-export function parseInviteTokenPayload(token: string): { staffId: string; displayName: string } | null {
+/**
+ * Generate Mode B invite link: encode staff info as base64 JSON and return join URL.
+ * Token includes venueId so staff can bind without being venue-logged in.
+ */
+export function generateInviteLink(
+  staffId: string,
+  displayName: string,
+  venueId: string,
+  venueName?: string
+): string {
+  const payload: InviteTokenPayload = {
+    staffId,
+    displayName: displayName || staffId,
+    venueId,
+    ...(venueName != null && { venueName }),
+  };
+  const token = btoa(JSON.stringify(payload));
+  return `${JOIN_BASE_URL}/join?t=${encodeURIComponent(token)}`;
+}
+
+/** Parse invite token payload (base64 JSON for Mode B, or legacy raw token as staffId). */
+export function parseInviteTokenPayload(token: string): InviteTokenPayload | null {
   try {
-    const decoded = JSON.parse(atob(token)) as { staffId?: string; displayName?: string };
+    const decoded = JSON.parse(atob(token)) as InviteTokenPayload;
     if (decoded?.staffId) {
       return {
         staffId: decoded.staffId,
         displayName: decoded.displayName ?? decoded.staffId,
+        venueId: decoded.venueId,
+        venueName: decoded.venueName,
       };
     }
   } catch {
-    // Not base64 JSON; use token as staffId
+    // Not base64 JSON; use token as staffId (legacy)
   }
   return { staffId: token, displayName: token };
 }

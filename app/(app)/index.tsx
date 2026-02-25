@@ -5,11 +5,9 @@ import { useTranslation } from "react-i18next";
 import { useVenueStore } from "@/stores/venueStore";
 import { useStaffStore } from "@/stores/staffStore";
 import { useVenueAuth } from "@/auth/useVenueAuth";
-import { createInvite } from "@/auth/inviteToken";
+import { generateInviteLink } from "@/auth/inviteToken";
 import { StaffWelcome } from "./StaffWelcome";
 import { styles } from "./index.styles";
-
-const JOIN_BASE_URL = "http://localhost:8081";
 
 export default function AppHomeScreen() {
   const { t } = useTranslation();
@@ -20,23 +18,17 @@ export default function AppHomeScreen() {
 
   const [inviteStaffName, setInviteStaffName] = useState("");
   const [inviteLink, setInviteLink] = useState<string | null>(null);
-  const [isGenerating, setIsGenerating] = useState(false);
 
   const handleSignOut = async () => {
     await signOut();
     router.replace("/");
   };
 
-  const handleGenerateInvite = async () => {
-    if (!venue?.venueId || isGenerating) return;
-    setIsGenerating(true);
-    setInviteLink(null);
-    try {
-      const { token } = await createInvite(venue.venueId, inviteStaffName);
-      setInviteLink(`${JOIN_BASE_URL}/join?t=${token}`);
-    } finally {
-      setIsGenerating(false);
-    }
+  const handleGenerateInvite = () => {
+    if (!venue?.venueId) return;
+    const displayName = inviteStaffName.trim() || "Staff";
+    const staffId = displayName.replace(/\s+/g, "-").toLowerCase() || `staff-${Date.now()}`;
+    setInviteLink(generateInviteLink(staffId, displayName, venue.venueId));
   };
 
   if (staff) {
@@ -55,21 +47,13 @@ export default function AppHomeScreen() {
           placeholderTextColor="#6b7280"
           value={inviteStaffName}
           onChangeText={setInviteStaffName}
-          editable={!isGenerating}
         />
         <Pressable
-          style={({ pressed }) => [
-            styles.button,
-            pressed && styles.buttonPressed,
-            isGenerating && styles.buttonDisabled,
-          ]}
+          style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
           onPress={handleGenerateInvite}
-          disabled={isGenerating}
           accessibilityRole="button"
         >
-          <Text style={styles.buttonText}>
-            {isGenerating ? t("common.loading") : t("auth.generateInviteLink")}
-          </Text>
+          <Text style={styles.buttonText}>{t("auth.generateInviteLink")}</Text>
         </Pressable>
         {inviteLink ? (
           <Text style={styles.linkText} selectable>

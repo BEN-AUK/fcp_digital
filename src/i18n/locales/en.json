@@ -35,6 +35,6 @@
     "loading": "Loading..."
   },
   "staff": {
-    "welcomeMessage": "Hello World - {{name}}, Welcome to {{venueName}}"
+    "welcomeMessage": "Hello World! Welcome, {{name}} from {{venueName}}"
   }
 }
