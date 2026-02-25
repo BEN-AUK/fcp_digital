@@ -2,6 +2,7 @@
  * Staff join / onboarding screen.
  * Signature: UniversalSignature (Native = react-native-signature-canvas, Web = react-signature-canvas).
  * Requires: expo-device (deviceId).
+ * Flow: name + signature → write to Firestore users (displayName, signature, deviceId, created_at, is_owner, venueId) → then setStaff + navigate.
  */
 import { useEffect, useState, useRef } from "react";
 import {
@@ -139,7 +140,7 @@ export default function JoinScreen() {
           deviceId,
         };
         setStaff(staff);
-        router.replace("/(app)/index");
+        router.replace("/(app)/home");
       } catch {
         setStatus("form");
         setSubmitError(t("auth.joinSubmitError"));

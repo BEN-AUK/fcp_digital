@@ -10,7 +10,7 @@ import {
 import { useRouter, useNavigation, useFocusEffect } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { Ionicons } from "@expo/vector-icons";
-import { styles } from "./index.styles";
+import { styles } from "./manage.styles";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 

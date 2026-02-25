@@ -33,8 +33,10 @@ export async function getDeviceId(): Promise<string> {
 }
 
 /**
- * Write staff onboarding attestation to Firestore users collection.
- * Doc ID = staffId. All writes carry venueId for security.
+ * Write staff onboarding attestation to Firestore.
+ * Collection: top-level "users". Doc ID = staffId. All writes carry venueId for security.
+ * Fields: displayName, signature (base64), deviceId, created_at (serverTimestamp), is_owner: false, venueId.
+ * Caller must only persist to staffStore and navigate after this succeeds.
  */
 export async function saveStaffOnboarding(
   payload: StaffOnboardingPayload

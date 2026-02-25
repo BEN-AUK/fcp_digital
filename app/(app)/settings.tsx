@@ -3,7 +3,7 @@ import { View, Text, Pressable, Modal, type ViewStyle, type TextStyle } from "re
 import { useTranslation } from "react-i18next";
 import { Ionicons } from "@expo/vector-icons";
 import { useSettingsStore, type LanguageCode } from "@/stores/settingsStore";
-import { settingsStyles } from "./settings.styles";
+import { settingsStyles } from "./settings/settings.styles";
 
 const LANGUAGE_OPTIONS: { code: LanguageCode; label: string }[] = [
   { code: "en-NZ", label: "English (NZ)" },

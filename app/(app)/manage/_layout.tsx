@@ -7,7 +7,7 @@ export default function ManageLayout() {
   return (
     <Stack>
       <Stack.Screen
-        name="index"
+        name="manage"
         options={{
           headerShown: false,
           headerBackVisible: false,
@@ -15,7 +15,7 @@ export default function ManageLayout() {
         }}
       />
       <Stack.Screen
-        name="staff"
+        name="(staff)/staff"
         options={{
           title: "",
           presentation: "formSheet",

@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 /** 核心路径按钮最小点击面积 60×60px (Kitchen-Ready UI) */
 const MIN_BUTTON_SIZE = 60;
 
-/** 授权员工页：100dvh 全屏居中，Web/移动端一致。 */
+/** Home / 授权员工等页：100dvh 全屏居中，Web/移动端一致。 */
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -18,12 +18,10 @@ export const styles = StyleSheet.create({
     maxWidth: 400,
     alignItems: "stretch",
   },
-  /** ScrollView outer: layout that affects the scroll container only (no child layout). */
   scrollSection: {
     width: "100%",
     maxWidth: 400,
   },
-  /** ScrollView content: child layout must go in contentContainerStyle (react-native-web). */
   scrollContent: {
     alignItems: "stretch",
     paddingBottom: 24,

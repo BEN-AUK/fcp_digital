@@ -67,9 +67,10 @@ export default function AppLayout() {
           marginTop: 4,
         },
       }}
+      initialRouteName="(home)/home"
     >
       <Tabs.Screen
-        name="index/index"
+        name="(home)/home"
         options={{
           title: t("tabs.quick_record"),
           tabBarLabel: t("tabs.quick_record"),
@@ -77,7 +78,7 @@ export default function AppLayout() {
         }}
       />
       <Tabs.Screen
-        name="settings/index"
+        name="settings"
         options={{
           title: t("tabs.settings"),
           tabBarLabel: t("tabs.settings"),

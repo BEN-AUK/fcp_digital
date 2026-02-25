@@ -34,6 +34,12 @@ alwaysApply: true
     - 路径：`src/components/[ComponentName]/`
     - 必须包含：`index.tsx` (组件逻辑)
     - 必须包含：`[ComponentName].module.css` 或 `index.styles.ts` (专属样式)
+- **App 路由禁止 index.tsx**: 禁止在 `app/` 目录下创建除根目录以外的 `index.tsx`；必须使用 `(folder)/folder.tsx` 的路由组模式保持文件名唯一性与可读性。
+- **路由文件命名 (App Routes - (Folder)/File.tsx 模式)**:
+  - **规则**: 所有页面必须以 `(folder)/folder.tsx` 形式存在；样式文件必须放在该同名路由组文件夹内，与页面同目录（即 `(folder)/folder.styles.ts`），禁止使用 `index.tsx` 堆叠。
+  - **结构**: `app/(group)/([feature])/[feature].tsx` 与 `app/(group)/([feature])/[feature].styles.ts` 同目录（如 `(staff)/staff.tsx` + `(staff)/staff.styles.ts`、`(join)/join.tsx` + `(join)/join.styles.ts`、`(home)/home.tsx` + `(home)/home.styles.ts`）。
+  - **样式引用**: 页面内通过 `./[feature].styles` 引用（与页面同目录）。
+  - **特例**: 首屏使用 `(home)/home.tsx`，避免与路由根冲突。
 - **类型安全**: 严格 TypeScript，严禁 `any`。所有 Log 必须符合 `src/types/logs.d.ts` 定义。
 - **离线优先**: 使用 Zustand 管理本地状态，写入先落本地缓存，背景静默同步。
 - **反馈闭环**: 必须提供 `isCapturing`、`isProcessingAI`、`isUploading` 的全局视觉反馈。
