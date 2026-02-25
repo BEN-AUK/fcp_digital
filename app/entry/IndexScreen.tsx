@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { View, ActivityIndicator } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, type Href } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { useVenueStore } from "@/stores/venueStore";
 import { styles } from "./index.styles";
@@ -17,7 +17,7 @@ export default function IndexScreen() {
       router.replace("/(auth)/login");
       return;
     }
-    router.replace("/(app)");
+    router.replace("/(app)" as Href);
   }, [isVenueReady, isAuthenticated, router]);
 
   return (

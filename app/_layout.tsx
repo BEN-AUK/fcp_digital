@@ -1,6 +1,6 @@
 import "../src/i18n";
 import { useEffect } from "react";
-import { Stack, useRouter, usePathname } from "expo-router";
+import { Stack, useRouter, usePathname, type Href } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useFonts } from "expo-font";
 import { Ionicons } from "@expo/vector-icons";
@@ -31,7 +31,7 @@ export default function RootLayout() {
       router.replace("/(auth)/login");
       return;
     }
-    router.replace("/(app)");
+    router.replace("/(app)" as Href);
   }, [isVenueReady, isAuthenticated, pathname, router]);
 
   if (!fontsLoaded && !fontError) {

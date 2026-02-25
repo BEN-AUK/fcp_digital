@@ -1,11 +1,11 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, type DimensionValue } from "react-native";
 
 const MIN_BUTTON_HEIGHT = 60;
 
 export const joinStyles = StyleSheet.create({
   screen: {
     flex: 1,
-    height: "100dvh",
+    height: "100dvh" as DimensionValue,
     backgroundColor: "#FFFFFF",
     padding: 24,
   },

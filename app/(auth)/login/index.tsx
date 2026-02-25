@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { View, TextInput, Pressable, Text } from "react-native";
-import { useRouter, Link } from "expo-router";
+import { useRouter, Link, type Href } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { useVenueAuth } from "@/auth/useVenueAuth";
 import { styles } from "./login.styles";
@@ -23,7 +23,7 @@ export default function LoginScreen() {
     setLoading(true);
     try {
       await signIn(email.trim(), password);
-      router.replace("/(app)");
+      router.replace("/(app)" as Href);
     } catch (e) {
       setError(e instanceof Error ? e.message : t("auth.errorSignInFailed"));
     } finally {

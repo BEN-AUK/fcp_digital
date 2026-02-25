@@ -30,7 +30,7 @@ export default function ManageIndexScreen() {
   useEffect(() => {
     const parent = navigation.getParent();
     if (!parent) return;
-    const unsub = parent.addListener("tabPress", () => {
+    const unsub = (parent as { addListener: (e: string, cb: () => void) => () => void }).addListener("tabPress", () => {
       setShowMenu(true);
     });
     return unsub;

@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, type DimensionValue } from "react-native";
 
 const MIN_TOUCH_SIZE = 60;
 
@@ -6,7 +6,7 @@ export const settingsStyles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: "#FFFFFF",
-    height: "100dvh",
+    height: "100dvh" as DimensionValue,
   },
   list: {
     backgroundColor: "#FFFFFF",

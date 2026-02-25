@@ -12,6 +12,9 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  type ViewStyle,
+  type TextStyle,
+  type StyleProp,
 } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
@@ -180,10 +183,10 @@ export default function JoinScreen() {
     );
   }
 
-  if (status === "form" && inviteContext) {
+  if ((status === "form" || status === "submitting") && inviteContext) {
     return (
       <KeyboardAvoidingView
-        style={joinStyles.screen}
+        style={joinStyles.screen as ViewStyle}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
       >
@@ -192,11 +195,11 @@ export default function JoinScreen() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <Text style={joinStyles.title}>{t("auth.joinOnboardingTitle")}</Text>
+          <Text style={joinStyles.title as TextStyle}>{t("auth.joinOnboardingTitle")}</Text>
 
-          <Text style={joinStyles.fieldLabel}>{t("auth.joinDisplayNameLabel")}</Text>
+          <Text style={joinStyles.fieldLabel as TextStyle}>{t("auth.joinDisplayNameLabel")}</Text>
           <TextInput
-            style={joinStyles.input}
+            style={joinStyles.input as TextStyle}
             placeholder={t("auth.joinDisplayNamePlaceholder")}
             placeholderTextColor="#8E8E93"
             value={displayName}
@@ -206,7 +209,7 @@ export default function JoinScreen() {
             accessibilityLabel={t("auth.joinDisplayNameLabel")}
           />
 
-          <Text style={[joinStyles.fieldLabel, joinStyles.signatureSection]}>
+          <Text style={[joinStyles.fieldLabel, joinStyles.signatureSection] as StyleProp<TextStyle>}>
             {t("auth.joinSignatureLabel")}
           </Text>
           <SignatureCanvas
@@ -216,14 +219,14 @@ export default function JoinScreen() {
           />
 
           {submitError ? (
-            <Text style={joinStyles.submitError}>{submitError}</Text>
+            <Text style={joinStyles.submitError as TextStyle}>{submitError}</Text>
           ) : null}
 
           <Pressable
             onPress={handleSubmit}
             style={({ pressed }) => [
-              joinStyles.submitButton,
-              (status === "submitting" || pressed) && joinStyles.submitButtonDisabled,
+              joinStyles.submitButton as ViewStyle,
+              (status === "submitting" || pressed) && (joinStyles.submitButtonDisabled as ViewStyle),
             ]}
             disabled={status === "submitting"}
             accessibilityRole="button"
@@ -232,7 +235,7 @@ export default function JoinScreen() {
             {status === "submitting" ? (
               <ActivityIndicator size="small" color="#FFFFFF" />
             ) : (
-              <Text style={joinStyles.submitButtonText}>{t("auth.joinSubmit")}</Text>
+              <Text style={joinStyles.submitButtonText as TextStyle}>{t("auth.joinSubmit")}</Text>
             )}
           </Pressable>
         </ScrollView>

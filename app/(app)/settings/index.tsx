@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Text, Pressable, Modal } from "react-native";
+import { View, Text, Pressable, Modal, type ViewStyle, type TextStyle } from "react-native";
 import { useTranslation } from "react-i18next";
 import { Ionicons } from "@expo/vector-icons";
 import { useSettingsStore, type LanguageCode } from "@/stores/settingsStore";
@@ -25,22 +25,22 @@ export default function SettingsScreen() {
   };
 
   return (
-    <View style={settingsStyles.screen}>
-      <View style={settingsStyles.list}>
-        <View style={settingsStyles.row}>
-          <View style={settingsStyles.rowLeft}>
-            <View style={settingsStyles.iconWrap}>
+    <View style={settingsStyles.screen as ViewStyle}>
+      <View style={settingsStyles.list as ViewStyle}>
+        <View style={settingsStyles.row as ViewStyle}>
+          <View style={settingsStyles.rowLeft as ViewStyle}>
+            <View style={settingsStyles.iconWrap as ViewStyle}>
               <Ionicons name="language" size={18} color="#000000" />
             </View>
-            <Text style={settingsStyles.rowLabel}>{t("settings.language")}</Text>
+            <Text style={settingsStyles.rowLabel as TextStyle}>{t("settings.language")}</Text>
           </View>
           <Pressable
-            style={settingsStyles.valueTouch}
+            style={settingsStyles.valueTouch as ViewStyle}
             onPress={() => setPickerVisible(true)}
             accessibilityRole="button"
             accessibilityLabel={t("settings.select_language")}
           >
-            <Text style={settingsStyles.valueText} numberOfLines={1}>
+            <Text style={settingsStyles.valueText as TextStyle} numberOfLines={1}>
               {getLanguageLabel(language)}
             </Text>
           </Pressable>
@@ -54,20 +54,20 @@ export default function SettingsScreen() {
         onRequestClose={() => setPickerVisible(false)}
       >
         <Pressable
-          style={settingsStyles.modalBackdrop}
+          style={settingsStyles.modalBackdrop as ViewStyle}
           onPress={() => setPickerVisible(false)}
         >
-          <Pressable style={settingsStyles.modalSheet} onPress={(e) => e.stopPropagation()}>
+          <Pressable style={settingsStyles.modalSheet as ViewStyle} onPress={(e) => e.stopPropagation()}>
             {LANGUAGE_OPTIONS.map((opt, i) => (
               <Pressable
                 key={opt.code}
                 style={[
-                  settingsStyles.modalOption,
-                  i === LANGUAGE_OPTIONS.length - 1 && settingsStyles.modalOptionLast,
+                  settingsStyles.modalOption as ViewStyle,
+                  i === LANGUAGE_OPTIONS.length - 1 && (settingsStyles.modalOptionLast as ViewStyle),
                 ]}
                 onPress={() => handleSelect(opt.code)}
               >
-                <Text style={settingsStyles.modalOptionText}>{opt.label}</Text>
+                <Text style={settingsStyles.modalOptionText as TextStyle}>{opt.label}</Text>
               </Pressable>
             ))}
           </Pressable>

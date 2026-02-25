@@ -143,7 +143,9 @@ export async function validateInviteToken(token: string): Promise<ValidatedInvit
 
   const venueRef = doc(db, "venues", venueId);
   const venueSnap = await getDoc(venueRef);
-  const venueName = (venueSnap.exists() && (venueSnap.data()?.shopName as string | undefined)) ?? venueId;
+  const venueName = venueSnap.exists()
+    ? ((venueSnap.data()?.shopName as string | undefined) ?? venueId)
+    : venueId;
 
   return {
     venueId,

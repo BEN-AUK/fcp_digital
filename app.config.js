@@ -3,6 +3,7 @@ export default {
     name: "fcp-digital",
     slug: "fcp-digital",
     version: "1.0.0",
+    sdkVersion: "54.0.0",
     orientation: "portrait",
     scheme: "fcp-digital",
     web: {
