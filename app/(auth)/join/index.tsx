@@ -1,6 +1,7 @@
 /**
  * Staff join / onboarding screen.
- * Requires: react-native-signature-canvas (signature), expo-device (deviceId), react-native-webview (peer of signature-canvas).
+ * Signature: UniversalSignature (Native = react-native-signature-canvas, Web = react-signature-canvas).
+ * Requires: expo-device (deviceId).
  */
 import { useEffect, useState, useRef } from "react";
 import {
@@ -27,8 +28,8 @@ import {
 import { saveStaffOnboarding, getDeviceId } from "@/auth/staffOnboarding";
 import { useStaffStore } from "@/stores/staffStore";
 import type { StaffContext } from "@/types/auth";
-import { SignatureCanvas } from "@/components/SignatureCanvas";
-import type { SignatureViewRef } from "@/components/SignatureCanvas";
+import { UniversalSignature } from "@/components/UniversalSignature";
+import type { UniversalSignatureViewRef } from "@/components/UniversalSignature";
 import { joinStyles } from "./join.styles";
 
 type InviteContext = {
@@ -48,7 +49,7 @@ export default function JoinScreen() {
   const [token, setToken] = useState<string | null>(null);
   const [displayName, setDisplayName] = useState("");
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const sigRef = useRef<SignatureViewRef>(null);
+  const sigRef = useRef<UniversalSignatureViewRef>(null);
   const setStaff = useStaffStore((s) => s.setStaff);
   /** When user taps Submit we request signature; onOK reads this and runs save */
   const pendingSubmitRef = useRef<{ displayName: string } | null>(null);
@@ -212,7 +213,7 @@ export default function JoinScreen() {
           <Text style={[joinStyles.fieldLabel, joinStyles.signatureSection] as StyleProp<TextStyle>}>
             {t("auth.joinSignatureLabel")}
           </Text>
-          <SignatureCanvas
+          <UniversalSignature
             ref={sigRef}
             onOK={handleSignatureOK}
             onEmpty={handleSignatureEmpty}
