@@ -1,39 +1,39 @@
 ---
-description: NZ Food Safety core development non-negotiables (legal, hardware, auth, UI, coding)
+description: NZ Food Safety core development non-negotiables (Legal, Hardware, Auth, UI, Styling, Structure)
 alwaysApply: true
 ---
 
 # 核心开发底线 (STRICT NON-NEGOTIABLES)
 
 ## 1. 法律合规与数据真实性 (NZ Food Safety Integrity)
-
-- **双时间戳**: 所有日志提交必须包含 `measured_at`（用户录入时间）和 `created_at`（服务器 NTP 时间）。若 `abs(measured_at - created_at) > 24h`，必须标记 `is_backdated: true`。
-- **强制纠正闭环**: 严禁绕过异常处理。当输入值触发阈值（如冰箱 > 5°C）时，必须通过状态机强制跳转至 `CorrectiveActionScreen`，未完成处理流程严禁关闭页面。
-- **存证水印**: 拍照存证组件必须在 Canvas 底部合成半透明黑条，写入：`[设备ID] [实时NTP时间] [GPS坐标]`。这是应对审计员质疑的核心证据。
-- **多语言强制**: 严禁在 UI 中硬编码任何字符串。所有文案必须通过 `t('key')` 调用。报告生成逻辑必须强制映射至 `en-NZ` 标准术语。
+- **双时间戳**: 所有日志提交必须包含 `measured_at`（用户录入时间）和 `created_at`（服务器 NTP 时间）。若偏差 > 24h，标记 `is_backdated: true`。
+- **强制纠正闭环**: 异常值（如冰箱 > 5°C）必须强制跳转至 `CorrectiveActionScreen`，未完成严禁退出。
+- **存证水印**: 拍照组件必须在 Canvas 合成：`[设备ID] [实时NTP时间] [GPS坐标]`。
+- **多语言**: 严禁硬编码。所有文案通过 `t('key')` 调用，报告强制映射至 `en-NZ`。
 
 ## 2. 硬件与数据采集逻辑 (AI + Manual Fallback)
+- **设备识别**: 录入流程必须以扫码 (QR Identification) 为起点。
+- **AI 提取**: 遵循 `Capture` → `AI OCR` → `Staff Confirmation`。置信度 < 0.6 必须高亮数字框。
+- **摄像头与 GPS**: 强制后置摄像头；开启 `highAccuracy` GPS 监听。
 
-- **摄像头**: 强制使用 `facingMode: 'environment'` 并请求最高分辨率。
-- **扫码前置**: 录入流程必须以扫码 (QR Identification) 为起点，严禁在未确定设备 ID 的情况下开启录入。
-- **AI 流水线**: 遵循 `Capture` → `AI OCR` → `Staff Confirmation/Manual Edit`。AI 置信度低于 0.6 时必须自动高亮数字输入框提示手动核对。
-- **GPS**: 录入开启时启动 `navigator.geolocation.getCurrentPosition`，并设置 `enableHighAccuracy: true`。
-
-## 3. 授权与安全架构 (Dual-Layer Auth)
-
-- **层级隔离**: 严格区分 `Venue Context`（Firebase Auth 持久化）与 `Staff Context`（本地存储持久化）。
-- **持久化**: Firebase 配置中必须开启 `browserLocalPersistence`，确保设备重启后餐厅授权状态不丢失。
+## 3. 授权与安全架构 (Auth & Persistence)
+- **双层隔离**: 严格区分 `Venue Context` (Firebase Auth) 与 `Staff Context` (本地持久化)。
+- **持久化**: Firebase 必须配置 `browserLocalPersistence`。确保关机重启后餐厅授权状态不丢失。
 - **写保护**: 所有 Firestore 写入必须携带 `venueId`。
 
-## 4. 技术栈与 UI/UX (Kitchen-Ready UI)
+## 4. 样式隔离与 UI 规范 (Styling & CSS Architecture)
+- **CSS 分离原则**:
+  - **Tailwind 限制**: 单个元素严禁堆叠超过 6 个 Tailwind 类名。超过必须抽离至 CSS Modules。
+  - **100dvh 适配**: 所有全屏页面必须使用 `height: 100dvh` 以解决移动端浏览器工具栏遮挡问题。
+- **交互规范**: 核心按钮点击面积 ≥ 60x60px；严禁使用 Swipe 执行核心逻辑。
 
-- **样式隔离**:
-  - 基础布局、间距、颜色使用 **Tailwind CSS**。
-  - 视口适配 (`dvh/svh`)、复杂 Canvas、数字键盘布局、严格 `object-fit` 裁剪等，**必须使用 CSS Modules** (`ComponentName.module.css`)。
-- **极简交互**: 核心路径（扫码、确认、保存）严禁使用 Swipe；必须使用点击面积不小于 60×60px 的大按钮。
-- **离线优先**: 使用 Zustand 管理本地状态；写入先落本地缓存，背景静默同步至云端。
-
-## 5. 编码规范
-
-- **类型安全**: 严格 TypeScript，严禁 `any`。所有 Log 条目必须符合 `src/types/logs.d.ts` 定义。
-- **状态追踪**: 必须保留 `isCapturing`、`isProcessingAI`、`isUploading` 的全局视觉反馈，防止处理过程中用户重复点击。
+## 5. 项目结构与编码规范 (Project Structure - NEW)
+- **组件文件夹模式 (Folder-Based Components)**:
+  - **强制结构**: 严禁在 `src/components/` 或 `app/` 根目录下直接放置 `.tsx` 文件。
+  - **专属目录**: 每个新组件必须创建自己的子文件夹。
+    - 路径：`src/components/[ComponentName]/`
+    - 必须包含：`index.tsx` (组件逻辑)
+    - 必须包含：`[ComponentName].module.css` 或 `index.styles.ts` (专属样式)
+- **类型安全**: 严格 TypeScript，严禁 `any`。所有 Log 必须符合 `src/types/logs.d.ts` 定义。
+- **离线优先**: 使用 Zustand 管理本地状态，写入先落本地缓存，背景静默同步。
+- **反馈闭环**: 必须提供 `isCapturing`、`isProcessingAI`、`isUploading` 的全局视觉反馈。

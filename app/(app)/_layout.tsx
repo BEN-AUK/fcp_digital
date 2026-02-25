@@ -77,6 +77,7 @@ export default function AppLayout() {
       <Tabs.Screen
         name="manage"
         options={{
+          headerShown: false,
           title: t("tabs.management"),
           tabBarLabel: t("tabs.management"),
           tabBarIcon: ({ focused }) => <TabIcon name="clipboard-outline" focused={focused} />,

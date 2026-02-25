@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { View, Text, TextInput, Pressable, Alert, ScrollView } from "react-native";
 import { useTranslation } from "react-i18next";
+import { useNavigation } from "expo-router";
+import Head from "expo-router/head";
 import { useVenueStore } from "@/stores/venueStore";
 import {
   createStaffInvite,
@@ -35,10 +37,18 @@ function getStatusKey(status: StaffInviteRecord["status"]): string {
 
 export default function ManageStaffScreen() {
   const { t } = useTranslation();
+  const navigation = useNavigation();
   const venue = useVenueStore((s) => s.venue);
   const [employeeName, setEmployeeName] = useState("");
   const [invites, setInvites] = useState<StaffInviteRecord[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerShown: false,
+      header: () => null,
+    });
+  }, [navigation]);
 
   useEffect(() => {
     if (!venue?.venueId) return;
@@ -82,7 +92,11 @@ export default function ManageStaffScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <>
+      <Head>
+        <title>{t("manage.manage_staff")}</title>
+      </Head>
+      <View style={styles.container}>
       <ScrollView
         style={styles.scrollSection}
         contentContainerStyle={styles.scrollContent}
@@ -150,5 +164,6 @@ export default function ManageStaffScreen() {
         </View>
       </ScrollView>
     </View>
+    </>
   );
 }

@@ -5,17 +5,23 @@ export default function ManageLayout() {
   const { t } = useTranslation();
 
   return (
-    <Stack screenOptions={{ headerShown: true }}>
+    <Stack>
       <Stack.Screen
         name="index"
-        options={{ title: t("tabs.management") }}
+        options={{
+          headerShown: false,
+          headerBackVisible: false,
+          headerLeft: () => null,
+        }}
       />
       <Stack.Screen
         name="staff"
         options={{
-          presentation: "modal",
-          title: t("manage.manage_staff"),
-          headerTitleAlign: "center",
+          title: "",
+          presentation: "formSheet",
+          sheetGrabberVisible: true,
+          headerShown: false,
+          header: () => null,
         }}
       />
     </Stack>
