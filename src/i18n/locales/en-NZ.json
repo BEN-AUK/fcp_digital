@@ -34,7 +34,16 @@
     "inviteStatusRevoked": "Revoked",
     "revoke": "Revoke",
     "joinInvalidToken": "Invalid or expired invite link",
-    "joinBinding": "Binding to venue..."
+    "joinBinding": "Binding to venue...",
+    "joinOnboardingTitle": "Staff onboarding",
+    "joinDisplayNameLabel": "Full name (real name)",
+    "joinDisplayNamePlaceholder": "Enter your full name",
+    "joinSignatureLabel": "Handwritten signature",
+    "signatureClear": "Clear",
+    "joinSubmit": "Submit and enter",
+    "joinSubmitError": "Failed to save. Please try again.",
+    "joinErrorNameRequired": "Please enter your name",
+    "joinErrorSignatureRequired": "Please provide your signature"
   },
   "common": {
     "confirm": "Confirm",
@@ -52,5 +61,9 @@
     "quick_record": "Quick Record",
     "management": "Manage",
     "settings": "Settings"
+  },
+  "settings": {
+    "language": "Language",
+    "select_language": "Select Language"
   }
 }

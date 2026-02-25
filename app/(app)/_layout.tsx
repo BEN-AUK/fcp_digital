@@ -1,8 +1,11 @@
+import { useEffect } from "react";
 import { Tabs } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useVenueStore } from "@/stores/venueStore";
+import { useSettingsStore } from "@/stores/settingsStore";
+import i18n from "@/i18n";
 
 const TAB_ACTIVE = "#7F57F1";
 const TAB_INACTIVE = "#999999";
@@ -38,6 +41,11 @@ function TabIcon({
 export default function AppLayout() {
   const { t } = useTranslation();
   const isVenueOwner = useVenueStore((s) => s.isAuthenticated);
+  const language = useSettingsStore((s) => s.language);
+
+  useEffect(() => {
+    i18n.changeLanguage(language);
+  }, [language]);
 
   return (
     <Tabs

@@ -12,4 +12,8 @@ export type StaffContext = {
   venueId: string;
   /** Venue display name for offline welcome screen */
   venueName?: string;
+  /** Base64 signature image from onboarding (attestation) */
+  signature?: string;
+  /** Device identifier (osBuildId or modelId) for binding */
+  deviceId?: string;
 };
