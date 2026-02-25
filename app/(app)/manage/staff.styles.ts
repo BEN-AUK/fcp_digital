@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 /** 核心路径按钮最小点击面积 60×60px (Kitchen-Ready UI) */
 const MIN_BUTTON_SIZE = 60;
 
-/** Manage 页：授权员工列表与邀请。 */
+/** Staff 页（Modal）：授权员工列表与邀请。 */
 export const styles = StyleSheet.create({
   container: {
     flex: 1,

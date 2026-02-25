@@ -45,9 +45,12 @@
   "staff": {
     "welcomeMessage": "Hello World! Welcome, {{name}} from {{venueName}}"
   },
+  "manage": {
+    "manage_staff": "Manage Staff"
+  },
   "tabs": {
-    "quickRecord": "Quick Record",
-    "settings": "Settings",
-    "manage": "Manage"
+    "quick_record": "Quick Record",
+    "management": "Manage",
+    "settings": "Settings"
   }
 }

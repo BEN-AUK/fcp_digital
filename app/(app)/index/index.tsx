@@ -5,7 +5,7 @@ export default function QuickRecordScreen() {
   const { t } = useTranslation();
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#fff" }}>
-      <Text style={{ fontSize: 18, color: "#111827" }}>{t("tabs.quickRecord")}</Text>
+      <Text style={{ fontSize: 18, color: "#111827" }}>{t("tabs.quick_record")}</Text>
     </View>
   );
 }

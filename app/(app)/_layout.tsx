@@ -1,31 +1,35 @@
 import { Tabs } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 const TAB_ACTIVE = "#7F57F1";
 const TAB_INACTIVE = "#999999";
+const ICON_SIZE = 24;
+
+const tabIconStyles = StyleSheet.create({
+  wrapper: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  indicator: {
+    width: 24,
+    height: 2,
+    backgroundColor: TAB_ACTIVE,
+    marginTop: 4,
+    borderRadius: 1,
+  },
+});
 
 function TabIcon({
   name,
   focused,
-  ...rest
-}: { name: keyof typeof Ionicons.glyphMap; focused: boolean } & React.ComponentProps<typeof Ionicons>) {
+}: { name: keyof typeof Ionicons.glyphMap; focused: boolean }) {
   const color = focused ? TAB_ACTIVE : TAB_INACTIVE;
   return (
-    <View style={{ alignItems: "center", justifyContent: "center" }}>
-      <Ionicons name={name} size={24} color={color} {...rest} />
-      {focused && (
-        <View
-          style={{
-            width: 24,
-            height: 2,
-            backgroundColor: TAB_ACTIVE,
-            marginTop: 4,
-            borderRadius: 1,
-          }}
-        />
-      )}
+    <View style={tabIconStyles.wrapper}>
+      <Ionicons name={name} size={ICON_SIZE} color={color} />
+      {focused && <View style={tabIconStyles.indicator} />}
     </View>
   );
 }
@@ -36,33 +40,34 @@ export default function AppLayout() {
   return (
     <Tabs
       screenOptions={{
-        headerShown: true,
+        headerShown: false,
         tabBarActiveTintColor: TAB_ACTIVE,
         tabBarInactiveTintColor: TAB_INACTIVE,
         tabBarStyle: {
-          backgroundColor: "#fff",
-          height: 70,
-          paddingBottom: 8,
-          paddingTop: 8,
+          height: 80,
+          paddingBottom: 24,
+          paddingTop: 10,
+          backgroundColor: "#FFFFFF",
           borderTopWidth: 1,
-          borderTopColor: "#e5e7eb",
+          borderTopColor: "#EEEEEE",
         },
         tabBarLabelStyle: {
           fontSize: 12,
           fontWeight: "500",
+          marginTop: 4,
         },
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="index/index"
         options={{
-          title: t("tabs.quickRecord"),
-          tabBarLabel: t("tabs.quickRecord"),
+          title: t("tabs.quick_record"),
+          tabBarLabel: t("tabs.quick_record"),
           tabBarIcon: ({ focused }) => <TabIcon name="pencil" focused={focused} />,
         }}
       />
       <Tabs.Screen
-        name="settings"
+        name="settings/index"
         options={{
           title: t("tabs.settings"),
           tabBarLabel: t("tabs.settings"),
@@ -72,8 +77,8 @@ export default function AppLayout() {
       <Tabs.Screen
         name="manage"
         options={{
-          title: t("tabs.manage"),
-          tabBarLabel: t("tabs.manage"),
+          title: t("tabs.management"),
+          tabBarLabel: t("tabs.management"),
           tabBarIcon: ({ focused }) => <TabIcon name="clipboard-outline" focused={focused} />,
         }}
       />
