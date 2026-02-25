@@ -1,14 +1,40 @@
 {
   "auth": {
     "venueLogin": "Venue login",
+    "register": "Register",
+    "registerTitle": "Venue owner sign up",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "shopName": "Shop name",
+    "registerSubmit": "Create account",
+    "goToRegister": "Create an account",
+    "goToLogin": "Already have an account? Sign in",
     "staffSelect": "Select staff",
     "signOut": "Sign out",
-    "inviteBinding": "You have been invited to this venue."
+    "inviteBinding": "You have been invited to this venue.",
+    "errorEmailPasswordRequired": "Email and password required",
+    "errorSignInFailed": "Sign in failed",
+    "errorPasswordMismatch": "Passwords do not match",
+    "errorRegistrationFailed": "Registration failed",
+    "passwordRules": "At least 8 characters, must include letters and numbers",
+    "errorPasswordTooShort": "Password must be at least 8 characters",
+    "errorPasswordNoLetter": "Password must contain at least one letter",
+    "errorPasswordNoNumber": "Password must contain at least one number",
+    "manageStaff": "Manage staff",
+    "generateInviteLink": "Generate invite link",
+    "inviteLinkCopied": "Invite link copied",
+    "staffNamePlaceholder": "Staff name (optional)",
+    "joinInvalidToken": "Invalid or expired invite link",
+    "joinBinding": "Binding to venue..."
   },
   "common": {
     "confirm": "Confirm",
     "cancel": "Cancel",
     "save": "Save",
     "loading": "Loading..."
+  },
+  "staff": {
+    "welcomeMessage": "Hello World - {{name}}, Welcome to {{venueName}}"
   }
 }

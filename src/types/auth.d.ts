@@ -10,4 +10,6 @@ export type StaffContext = {
   staffId: string;
   displayName: string;
   venueId: string;
+  /** Venue display name for offline welcome screen */
+  venueName?: string;
 };

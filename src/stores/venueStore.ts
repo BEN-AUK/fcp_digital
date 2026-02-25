@@ -5,6 +5,8 @@ import type { VenueContext } from "@/types/auth";
 type VenueState = {
   venue: VenueContext | null;
   isReady: boolean;
+  /** True when venue is set (owner logged in). Used for route guard. */
+  isAuthenticated: boolean;
   setVenue: (venue: VenueContext | null) => void;
   setReady: (ready: boolean) => void;
 };
@@ -12,6 +14,7 @@ type VenueState = {
 export const useVenueStore = create<VenueState>((set) => ({
   venue: null,
   isReady: false,
-  setVenue: (venue) => set({ venue }),
+  isAuthenticated: false,
+  setVenue: (venue) => set({ venue, isAuthenticated: venue !== null }),
   setReady: (ready) => set({ isReady: ready }),
 }));

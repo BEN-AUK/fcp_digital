@@ -1,14 +1,14 @@
 import { useState } from "react";
-import { View, TextInput, Pressable, Text, StyleSheet } from "react-native";
-import { useRouter } from "expo-router";
+import { View, TextInput, Pressable, Text } from "react-native";
+import { useRouter, Link } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { signInVenue } from "@/auth/useVenueAuth";
-
-const MIN_BUTTON_SIZE = 60;
+import { useVenueAuth } from "@/auth/useVenueAuth";
+import { styles } from "./login.styles";
 
 export default function LoginScreen() {
   const { t } = useTranslation();
   const router = useRouter();
+  const { signIn } = useVenueAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -17,15 +17,15 @@ export default function LoginScreen() {
   const handleSignIn = async () => {
     setError(null);
     if (!email.trim() || !password) {
-      setError("Email and password required");
+      setError(t("auth.errorEmailPasswordRequired"));
       return;
     }
     setLoading(true);
     try {
-      await signInVenue(email.trim(), password);
+      await signIn(email.trim(), password);
       router.replace("/(auth)/staff");
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Sign in failed");
+      setError(e instanceof Error ? e.message : t("auth.errorSignInFailed"));
     } finally {
       setLoading(false);
     }
@@ -36,7 +36,7 @@ export default function LoginScreen() {
       <Text style={styles.title}>{t("auth.venueLogin")}</Text>
       <TextInput
         style={styles.input}
-        placeholder="Email"
+        placeholder={t("auth.email")}
         value={email}
         onChangeText={setEmail}
         autoCapitalize="none"
@@ -45,7 +45,7 @@ export default function LoginScreen() {
       />
       <TextInput
         style={styles.input}
-        placeholder="Password"
+        placeholder={t("auth.password")}
         value={password}
         onChangeText={setPassword}
         secureTextEntry
@@ -60,41 +60,15 @@ export default function LoginScreen() {
       >
         <Text style={styles.buttonText}>{t("common.confirm")}</Text>
       </Pressable>
+      <Link href="/(auth)/register" asChild>
+        <Pressable
+          style={styles.linkWrap}
+          accessibilityRole="link"
+          disabled={loading}
+        >
+          <Text style={styles.link}>{t("auth.goToRegister")}</Text>
+        </Pressable>
+      </Link>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    padding: 24,
-  },
-  title: {
-    fontSize: 20,
-    marginBottom: 24,
-    textAlign: "center",
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 12,
-    marginBottom: 12,
-    borderRadius: 8,
-  },
-  error: {
-    color: "red",
-    marginBottom: 12,
-  },
-  button: {
-    minWidth: MIN_BUTTON_SIZE,
-    minHeight: MIN_BUTTON_SIZE,
-    backgroundColor: "#2563eb",
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 8,
-    marginTop: 8,
-  },
-  buttonPressed: { opacity: 0.8 },
-  buttonText: { color: "#fff", fontSize: 16 },
-});

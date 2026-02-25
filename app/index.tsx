@@ -4,17 +4,22 @@ import { useRouter } from "expo-router";
 import { useVenueStore } from "@/stores/venueStore";
 import { useStaffStore } from "@/stores/staffStore";
 import { useTranslation } from "react-i18next";
+import { styles } from "./index.styles";
 
 export default function IndexScreen() {
   const router = useRouter();
   const { t } = useTranslation();
   const isVenueReady = useVenueStore((s) => s.isReady);
-  const venue = useVenueStore((s) => s.venue);
+  const isAuthenticated = useVenueStore((s) => s.isAuthenticated);
   const staff = useStaffStore((s) => s.staff);
 
   useEffect(() => {
     if (!isVenueReady) return;
-    if (!venue) {
+    if (staff) {
+      router.replace("/(app)");
+      return;
+    }
+    if (!isAuthenticated) {
       router.replace("/(auth)/login");
       return;
     }
@@ -23,10 +28,10 @@ export default function IndexScreen() {
       return;
     }
     router.replace("/(app)");
-  }, [isVenueReady, venue, staff, router]);
+  }, [isVenueReady, isAuthenticated, staff, router]);
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+    <View style={styles.container}>
       <ActivityIndicator size="large" accessibilityLabel={t("common.loading")} />
     </View>
   );
