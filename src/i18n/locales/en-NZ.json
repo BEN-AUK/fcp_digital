@@ -25,6 +25,14 @@
     "generateInviteLink": "Generate invite link",
     "inviteLinkCopied": "Invite link copied",
     "staffNamePlaceholder": "Staff name (optional)",
+    "authoriseStaff": "Authorise staff",
+    "employeeNamePlaceholder": "Enter Employee Name",
+    "copyLink": "Copy link",
+    "inviteListTitle": "Invite list",
+    "inviteStatusPending": "Pending",
+    "inviteStatusActive": "Active",
+    "inviteStatusRevoked": "Revoked",
+    "revoke": "Revoke",
     "joinInvalidToken": "Invalid or expired invite link",
     "joinBinding": "Binding to venue..."
   },
@@ -36,5 +44,10 @@
   },
   "staff": {
     "welcomeMessage": "Hello World! Welcome, {{name}} from {{venueName}}"
+  },
+  "tabs": {
+    "quickRecord": "Quick Record",
+    "settings": "Settings",
+    "manage": "Manage"
   }
 }

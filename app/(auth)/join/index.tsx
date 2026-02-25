@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { View, Text, ActivityIndicator } from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { useTranslation } from "react-i18next";
-import { getJoinTokenFromUrl, parseInviteTokenPayload } from "@/auth/inviteToken";
+import { getJoinTokenFromUrl, validateInviteToken, parseInviteTokenPayload, setInviteActive } from "@/auth/inviteToken";
 import { useStaffStore } from "@/stores/staffStore";
 import type { StaffContext } from "@/types/auth";
 
@@ -22,6 +22,21 @@ export default function JoinScreen() {
       const token = raw?.trim() ? decodeURIComponent(raw.trim()) : null;
       if (!token) {
         if (!cancelled) setStatus("error");
+        return;
+      }
+      const validated = await validateInviteToken(token);
+      if (cancelled) return;
+      if (validated) {
+        const context: StaffContext = {
+          staffId: validated.staffId,
+          displayName: validated.staffName,
+          venueId: validated.venueId,
+          venueName: validated.venueName,
+        };
+        setStaff(context);
+        setInviteActive(token).catch(() => {});
+        setStatus("done");
+        router.replace("/(app)");
         return;
       }
       const payload = parseInviteTokenPayload(token);

@@ -23,7 +23,7 @@ export default function LoginScreen() {
     setLoading(true);
     try {
       await signIn(email.trim(), password);
-      router.replace("/(auth)/staff");
+      router.replace("/(app)");
     } catch (e) {
       setError(e instanceof Error ? e.message : t("auth.errorSignInFailed"));
     } finally {

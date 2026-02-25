@@ -9,7 +9,7 @@ export default {
       bundler: "metro",
       output: "single",
     },
-    plugins: ["expo-router", "expo-secure-store"],
+    plugins: ["expo-router", "expo-secure-store", "expo-font"],
     experiments: {
       typedRoutes: true,
     },

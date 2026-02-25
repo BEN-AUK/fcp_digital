@@ -1,5 +1,16 @@
 import { Linking } from "react-native";
-import { collection, doc, getDoc, setDoc, Timestamp } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  serverTimestamp,
+  query,
+  where,
+  onSnapshot,
+  Timestamp,
+} from "firebase/firestore";
 import { getFirestoreDb } from "@/config/firebase";
 
 const INVITE_EXPIRY_DAYS = 7;
@@ -8,6 +19,29 @@ const INVITE_PARAM = "inviteToken";
 const JOIN_PARAM = "t";
 
 const JOIN_BASE_URL = "http://localhost:8081";
+
+function randomToken16(): string {
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let s = "";
+  const arr = new Uint8Array(16);
+  if (typeof crypto !== "undefined" && crypto.getRandomValues) {
+    crypto.getRandomValues(arr);
+  } else {
+    for (let i = 0; i < 16; i++) arr[i] = Math.floor(Math.random() * 256);
+  }
+  for (let i = 0; i < 16; i++) s += chars[arr[i] % chars.length];
+  return s;
+}
+
+/** Staff invite record stored in Firestore invites collection. */
+export type StaffInviteRecord = {
+  id: string;
+  token: string;
+  staffName: string;
+  status: "pending" | "active" | "revoked";
+  createdAt?: Timestamp;
+};
 
 /** Payload encoded in Mode B invite token (base64 JSON). */
 export type InviteTokenPayload = {
@@ -89,7 +123,7 @@ export type ValidatedInvite = {
 
 /**
  * Validate invite token against Firestore invites collection.
- * Returns invite payload if doc exists and expiresAt > now; otherwise null.
+ * Accepts both legacy (expiresAt) and staff-invite (status) doc shapes.
  */
 export async function validateInviteToken(token: string): Promise<ValidatedInvite | null> {
   if (!token?.trim()) return null;
@@ -100,8 +134,12 @@ export async function validateInviteToken(token: string): Promise<ValidatedInvit
   const data = snap.data();
   const venueId = data?.venueId as string | undefined;
   const staffName = (data?.staffName as string | undefined) ?? "Staff";
+  const status = data?.status as string | undefined;
   const expiresAt = data?.expiresAt as Timestamp | undefined;
-  if (!venueId || !expiresAt || expiresAt.toMillis() <= Date.now()) return null;
+  if (!venueId) return null;
+  const validByExpiry = expiresAt && expiresAt.toMillis() > Date.now();
+  const validByStatus = status === "pending" || status === "active";
+  if (!validByExpiry && !validByStatus) return null;
 
   const venueRef = doc(db, "venues", venueId);
   const venueSnap = await getDoc(venueRef);
@@ -113,6 +151,73 @@ export async function validateInviteToken(token: string): Promise<ValidatedInvit
     staffName,
     venueName,
   };
+}
+
+/**
+ * Create a staff invite in Firestore (invites collection) and return the join URL.
+ * Caller must pass current venueId (owner context). All writes carry venueId for security.
+ */
+export async function createStaffInvite(
+  venueId: string,
+  staffName: string
+): Promise<{ url: string; token: string }> {
+  const db = getFirestoreDb();
+  const token = randomToken16();
+  const ref = doc(db, "invites", token);
+  await setDoc(ref, {
+    venueId,
+    staffName: staffName.trim() || "Staff",
+    token,
+    status: "pending",
+    createdAt: serverTimestamp(),
+  });
+  return { url: `${JOIN_BASE_URL}/join?t=${token}`, token };
+}
+
+/**
+ * Subscribe to all staff invites for a venue (real-time list). Returns unsubscribe.
+ */
+export function subscribeStaffInvites(
+  venueId: string,
+  onUpdate: (invites: StaffInviteRecord[]) => void
+): () => void {
+  const db = getFirestoreDb();
+  const q = query(
+    collection(db, "invites"),
+    where("venueId", "==", venueId)
+  );
+  const unsubscribe = onSnapshot(q, (snap) => {
+    const invites: StaffInviteRecord[] = snap.docs.map((d) => {
+      const dta = d.data();
+      return {
+        id: d.id,
+        token: (dta.token as string) ?? d.id,
+        staffName: (dta.staffName as string) ?? "Staff",
+        status: (dta.status as StaffInviteRecord["status"]) ?? "pending",
+        createdAt: dta.createdAt as Timestamp | undefined,
+      };
+    });
+    onUpdate(invites);
+  });
+  return unsubscribe;
+}
+
+/**
+ * Revoke a staff invite by setting status to "revoked". Doc must belong to caller's venue (enforce via rules).
+ */
+export async function revokeStaffInvite(token: string): Promise<void> {
+  const db = getFirestoreDb();
+  const ref = doc(db, "invites", token);
+  await updateDoc(ref, { status: "revoked" });
+}
+
+/**
+ * Mark a staff invite as "active" after staff has completed join. Used by /join flow.
+ */
+export async function setInviteActive(token: string): Promise<void> {
+  const db = getFirestoreDb();
+  const ref = doc(db, "invites", token);
+  await updateDoc(ref, { status: "active" });
 }
 
 /**
