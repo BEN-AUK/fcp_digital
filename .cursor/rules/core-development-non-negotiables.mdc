@@ -20,6 +20,7 @@ alwaysApply: true
 - **双层隔离**: 严格区分 `Venue Context` (Firebase Auth) 与 `Staff Context` (本地持久化)。
 - **持久化**: Firebase 必须配置 `browserLocalPersistence`。确保关机重启后餐厅授权状态不丢失。
 - **写保护**: 所有 Firestore 写入必须携带 `venueId`。
+- **Firestore 实体一致性准则**: 所有对 Firestore 的读写操作必须参考 `src/models/` 下对应集合的模型接口（`User`、`Venue`、`Invite`）。未来增加新字段时，必须先更新 `src/models/` 中对应模型文件，再修改业务代码。
 
 ## 4. 样式隔离与 UI 规范 (Styling & CSS Architecture)
 - **CSS 分离原则**:

@@ -1,6 +1,7 @@
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import * as Device from "expo-device";
 import { getFirestoreDb } from "@/config/firebase";
+import type { UserWrite } from "@/models";
 
 export type StaffOnboardingPayload = {
   staffId: string;
@@ -71,7 +72,7 @@ export async function saveStaffOnboarding(
 ): Promise<void> {
   const db = getFirestoreDb();
   const userRef = doc(db, "users", payload.staffId);
-  await setDoc(userRef, {
+  const userData: UserWrite = {
     displayName: payload.displayName.trim(),
     signature: payload.signature,
     deviceId: payload.deviceId,
@@ -79,5 +80,6 @@ export async function saveStaffOnboarding(
     is_owner: false,
     venueId: payload.venueId,
     staffId: payload.staffId,
-  });
+  };
+  await setDoc(userRef, userData);
 }

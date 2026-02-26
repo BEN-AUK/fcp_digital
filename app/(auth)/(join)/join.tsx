@@ -4,7 +4,7 @@
  * Requires: expo-device (deviceId).
  * Flow: name + signature → write to Firestore users (displayName, signature, deviceId, created_at, is_owner, venueId) → then setStaff + navigate.
  */
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, type ComponentProps } from "react";
 import {
   View,
   Text,
@@ -254,8 +254,8 @@ export default function JoinScreen() {
           <Text style={joinStyles.fieldLabel as TextStyle}>{t("auth.joinDisplayNameLabel")}</Text>
           <TextInput
             style={[
-              joinStyles.input as ViewStyle,
-              isNameError && (joinStyles.inputError as ViewStyle),
+              joinStyles.input as TextStyle,
+              isNameError && (joinStyles.inputError as TextStyle),
             ]}
             placeholder={t("auth.joinDisplayNamePlaceholder")}
             placeholderTextColor="#8E8E93"
@@ -264,7 +264,7 @@ export default function JoinScreen() {
             autoCapitalize="words"
             editable={status !== "submitting"}
             accessibilityLabel={t("auth.joinDisplayNameLabel")}
-            accessibilityState={{ invalid: isNameError }}
+            accessibilityState={{ invalid: isNameError } as ComponentProps<typeof TextInput>["accessibilityState"]}
           />
 
           <Text style={[joinStyles.fieldLabel, joinStyles.signatureSection] as StyleProp<TextStyle>}>

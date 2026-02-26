@@ -12,6 +12,7 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import { getFirestoreDb } from "@/config/firebase";
+import type { Invite, InviteStatus, InviteWrite, Venue } from "@/models";
 
 const INVITE_EXPIRY_DAYS = 7;
 
@@ -34,12 +35,12 @@ function randomToken16(): string {
   return s;
 }
 
-/** Staff invite record stored in Firestore invites collection. */
+/** Staff invite record (doc id + Invite fields) for real-time list. */
 export type StaffInviteRecord = {
   id: string;
   token: string;
   staffName: string;
-  status: "pending" | "active" | "completed" | "revoked";
+  status: InviteStatus;
   createdAt?: Timestamp;
 };
 
@@ -131,11 +132,11 @@ export async function validateInviteToken(token: string): Promise<ValidatedInvit
   const inviteRef = doc(db, "invites", token.trim());
   const snap = await getDoc(inviteRef);
   if (!snap.exists()) return null;
-  const data = snap.data();
-  const venueId = data?.venueId as string | undefined;
-  const staffName = (data?.staffName as string | undefined) ?? "Staff";
-  const status = data?.status as string | undefined;
-  const expiresAt = data?.expiresAt as Timestamp | undefined;
+  const data = snap.data() as Invite | undefined;
+  const venueId = data?.venueId;
+  const staffName = data?.staffName ?? "Staff";
+  const status = data?.status;
+  const expiresAt = data?.expiresAt;
   if (!venueId) return null;
   // 仅允许 status === "pending" 的链接进入加入流程；active/completed 视为已使用
   if (status != null && status !== "pending") return null;
@@ -145,9 +146,8 @@ export async function validateInviteToken(token: string): Promise<ValidatedInvit
 
   const venueRef = doc(db, "venues", venueId);
   const venueSnap = await getDoc(venueRef);
-  const venueName = venueSnap.exists()
-    ? ((venueSnap.data()?.shopName as string | undefined) ?? venueId)
-    : venueId;
+  const venueData = venueSnap.exists() ? (venueSnap.data() as Venue) : undefined;
+  const venueName = venueData?.shopName ?? venueId;
 
   return {
     venueId,
@@ -168,13 +168,14 @@ export async function createStaffInvite(
   const db = getFirestoreDb();
   const token = randomToken16();
   const ref = doc(db, "invites", token);
-  await setDoc(ref, {
+  const inviteData: InviteWrite = {
     venueId,
     staffName: staffName.trim() || "Staff",
     token,
     status: "pending",
     createdAt: serverTimestamp(),
-  });
+  };
+  await setDoc(ref, inviteData);
   return { url: `${JOIN_BASE_URL}/join?t=${token}`, token };
 }
 
@@ -190,15 +191,15 @@ export function subscribeStaffInvites(
     collection(db, "invites"),
     where("venueId", "==", venueId)
   );
-  const unsubscribe = onSnapshot(q, (snap) => {
+  const unsubscribe =   onSnapshot(q, (snap) => {
     const invites: StaffInviteRecord[] = snap.docs.map((d) => {
-      const dta = d.data();
+      const dta = d.data() as Invite;
       return {
         id: d.id,
-        token: (dta.token as string) ?? d.id,
-        staffName: (dta.staffName as string) ?? "Staff",
-        status: (dta.status as StaffInviteRecord["status"]) ?? "pending",
-        createdAt: dta.createdAt as Timestamp | undefined,
+        token: dta.token ?? d.id,
+        staffName: dta.staffName ?? "Staff",
+        status: (dta.status ?? "pending") as InviteStatus,
+        createdAt: dta.createdAt,
       };
     });
     onUpdate(invites);
@@ -238,11 +239,12 @@ export async function createInvite(
   const expiresAt = Timestamp.fromMillis(
     Date.now() + INVITE_EXPIRY_DAYS * 24 * 60 * 60 * 1000
   );
-  await setDoc(ref, {
+  const inviteData: InviteWrite = {
     venueId,
     staffName: staffName.trim() || "Staff",
     token: ref.id,
     expiresAt,
-  });
+  };
+  await setDoc(ref, inviteData);
   return { token: ref.id };
 }

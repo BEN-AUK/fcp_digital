@@ -28,7 +28,7 @@ export default function RootLayout() {
     if (pathname !== "/") return;
     // 唯一规则：已认证 → 主界面；未认证 → 登录。不经过员工选择。
     if (!isAuthenticated) {
-      router.replace("/(auth)/login");
+      router.replace("/login" as import("expo-router").Href);
       return;
     }
     router.replace("/(app)/(home)/home" as Href);

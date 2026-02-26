@@ -14,7 +14,7 @@ export default function IndexScreen() {
   useEffect(() => {
     if (!isVenueReady) return;
     if (!isAuthenticated) {
-      router.replace("/(auth)/login");
+      router.replace("/login" as import("expo-router").Href);
       return;
     }
     router.replace("/(app)/(home)/home" as Href);

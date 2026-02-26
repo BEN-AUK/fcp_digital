@@ -8,6 +8,7 @@ import {
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { useShallow } from "zustand/react/shallow";
 import { getFirebaseAuth, getFirestoreDb } from "@/config/firebase";
+import type { VenueWrite } from "@/models";
 import { useVenueStore } from "@/stores/venueStore";
 import { useStaffStore } from "@/stores/staffStore";
 import type { VenueContext } from "@/types/auth";
@@ -42,12 +43,13 @@ export function useVenueAuth() {
       const auth = getFirebaseAuth();
       const db = getFirestoreDb();
       const { user } = await createUserWithEmailAndPassword(auth, email, password);
-      await setDoc(doc(db, "venues", user.uid), {
+      const venueData: VenueWrite = {
         venueId: user.uid,
         email: user.email ?? email,
         shopName: shopName.trim() || null,
         createdAt: serverTimestamp(),
-      });
+      };
+      await setDoc(doc(db, "venues", user.uid), venueData);
     },
     []
   );

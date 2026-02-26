@@ -60,7 +60,7 @@ export default function LoginScreen() {
       >
         <Text style={styles.buttonText}>{t("common.confirm")}</Text>
       </Pressable>
-      <Link href="/(auth)/register" asChild>
+      <Link href={"/register" as const} asChild>
         <Pressable
           style={styles.linkWrap}
           accessibilityRole="link"

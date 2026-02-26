@@ -114,7 +114,7 @@ export default function RegisterScreen() {
         >
           <Text style={styles.buttonText}>{t("auth.registerSubmit")}</Text>
         </Pressable>
-        <Link href="/(auth)/login" asChild>
+        <Link href={"/login" as const} asChild>
           <Pressable
             style={styles.linkWrap}
             accessibilityRole="link"

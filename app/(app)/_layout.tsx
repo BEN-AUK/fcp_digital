@@ -101,7 +101,7 @@ export default function AppLayout() {
           title: t("tabs.management"),
           tabBarLabel: t("tabs.management"),
           tabBarIcon: ({ focused }) => <TabIcon name="clipboard-outline" focused={focused} />,
-          href: isVenueOwner ? "/manage" : null,
+          href: (isVenueOwner ? "/manage/manage" : null) as "/manage/manage" | null,
         }}
       />
     </Tabs>
