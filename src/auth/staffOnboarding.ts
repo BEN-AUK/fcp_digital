@@ -82,6 +82,7 @@ export async function saveStaffOnboarding(
     is_owner: isOwner,
     venueId: payload.venueId,
     staffId: payload.staffId,
+    isActive: true,
   };
   await setDoc(userRef, userData);
 }

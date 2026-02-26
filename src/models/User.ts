@@ -13,6 +13,8 @@ export interface User {
   is_owner: boolean;
   venueId: string;
   staffId: string;
+  /** Staff is active (onboarding completed). Written as true on join. */
+  isActive: boolean;
 }
 
 /** Write payload: created_at may be serverTimestamp() (FieldValue). */
