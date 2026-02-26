@@ -10,6 +10,7 @@ import {
 import { useRouter, useNavigation, useFocusEffect } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { Ionicons } from "@expo/vector-icons";
+import { theme } from "@/styles/theme";
 import { styles } from "./manage.styles";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -104,7 +105,7 @@ export default function ManageIndexScreen() {
                 <Ionicons
                   name="people-outline"
                   size={22}
-                  color="#374151"
+                  color={theme.colors.textPrimary}
                   style={styles.menuItemIcon}
                 />
                 <Text style={styles.menuItemText}>
@@ -113,7 +114,7 @@ export default function ManageIndexScreen() {
                 <Ionicons
                   name="chevron-forward"
                   size={20}
-                  color="#9CA3AF"
+                  color={theme.colors.textSecondary}
                   style={styles.menuItemChevron}
                 />
               </Pressable>
@@ -129,7 +130,7 @@ export default function ManageIndexScreen() {
                 <Ionicons
                   name="key-outline"
                   size={22}
-                  color="#374151"
+                  color={theme.colors.textPrimary}
                   style={styles.menuItemIcon}
                 />
                 <Text style={styles.menuItemText}>
@@ -138,7 +139,7 @@ export default function ManageIndexScreen() {
                 <Ionicons
                   name="chevron-forward"
                   size={20}
-                  color="#9CA3AF"
+                  color={theme.colors.textSecondary}
                   style={styles.menuItemChevron}
                 />
               </Pressable>

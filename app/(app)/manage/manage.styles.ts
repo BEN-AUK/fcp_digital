@@ -1,9 +1,7 @@
 import { StyleSheet } from "react-native";
+import { theme } from "@/styles/theme";
 
-/** 核心路径按钮最小点击面积 60×60px (Kitchen-Ready UI) */
-const MIN_BUTTON_SIZE = 60;
-
-/** Manage：从底部 Tab 向上弹出的菜单卡片，与 Tab 连在一起。 */
+/** Manage：从底部 Tab 向上弹出的菜单卡片，工业高能效深色主题。 */
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -21,70 +19,74 @@ export const styles = StyleSheet.create({
   },
   sheet: {
     width: "100%",
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
-    backgroundColor: "#FFFFFF",
-    paddingTop: 8,
-    paddingBottom: 32,
-    paddingHorizontal: 20,
+    borderTopLeftRadius: theme.borderRadius.l,
+    borderTopRightRadius: theme.borderRadius.l,
+    backgroundColor: theme.colors.surface,
+    borderWidth: 1,
+    borderBottomWidth: 0,
+    borderColor: theme.colors.border,
+    paddingTop: theme.spacing.s,
+    paddingBottom: theme.spacing.xl,
+    paddingHorizontal: theme.spacing.l,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 2,
   },
   sheetGrabber: {
     width: 36,
     height: 4,
     borderRadius: 2,
-    backgroundColor: "#D1D5DB",
+    backgroundColor: theme.colors.textMuted,
     alignSelf: "center",
-    marginBottom: 16,
+    marginBottom: theme.spacing.m,
   },
   sheetTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#111827",
+    ...theme.typography.header,
+    color: theme.colors.textPrimary,
     textAlign: "center",
-    marginBottom: 12,
+    marginBottom: theme.spacing.m,
   },
   menuItem: {
     flexDirection: "row",
     alignItems: "center",
-    minHeight: MIN_BUTTON_SIZE,
-    minWidth: MIN_BUTTON_SIZE,
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    backgroundColor: "#FFFFFF",
+    minHeight: theme.layout.touchableHeight,
+    paddingVertical: theme.spacing.m,
+    paddingHorizontal: theme.spacing.l,
+    backgroundColor: theme.colors.surface,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: "#E5E7EB",
+    borderBottomColor: theme.colors.border,
   },
   menuItemPressed: {
     opacity: 0.7,
   },
   menuItemIcon: {
-    marginRight: 14,
+    marginRight: theme.spacing.m,
   },
   menuItemText: {
     flex: 1,
-    fontSize: 16,
-    fontWeight: "500",
-    color: "#111827",
+    ...theme.typography.body,
+    color: theme.colors.textPrimary,
   },
   menuItemChevron: {
-    marginLeft: 8,
+    marginLeft: theme.spacing.s,
   },
   cancelButton: {
-    minHeight: MIN_BUTTON_SIZE,
+    minHeight: theme.layout.touchableHeight,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 16,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 12,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: "#E5E7EB",
+    marginTop: theme.spacing.m,
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.l,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
   },
   cancelButtonPressed: {
     opacity: 0.7,
   },
   cancelButtonText: {
-    fontSize: 16,
+    ...theme.typography.body,
     fontWeight: "600",
-    color: "#6B7280",
+    color: theme.colors.textSecondary,
   },
 });

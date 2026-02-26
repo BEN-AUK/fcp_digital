@@ -3,6 +3,8 @@ import { View, TextInput, Pressable, Text } from "react-native";
 import { useRouter, Link, type Href } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { useVenueAuth } from "@/auth/useVenueAuth";
+import { theme } from "@/styles/theme";
+import { ScreenContainer } from "@/components/common/ScreenContainer";
 import { styles } from "./login.styles";
 
 export default function LoginScreen() {
@@ -32,11 +34,12 @@ export default function LoginScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <ScreenContainer style={styles.container}>
       <Text style={styles.title}>{t("auth.venueLogin")}</Text>
       <TextInput
         style={styles.input}
         placeholder={t("auth.email")}
+        placeholderTextColor={theme.colors.textMuted}
         value={email}
         onChangeText={setEmail}
         autoCapitalize="none"
@@ -46,6 +49,7 @@ export default function LoginScreen() {
       <TextInput
         style={styles.input}
         placeholder={t("auth.password")}
+        placeholderTextColor={theme.colors.textMuted}
         value={password}
         onChangeText={setPassword}
         secureTextEntry
@@ -69,6 +73,6 @@ export default function LoginScreen() {
           <Text style={styles.link}>{t("auth.goToRegister")}</Text>
         </Pressable>
       </Link>
-    </View>
+    </ScreenContainer>
   );
 }

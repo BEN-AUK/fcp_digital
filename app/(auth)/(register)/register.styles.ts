@@ -1,60 +1,70 @@
 import { StyleSheet } from "react-native";
-
-/** 核心路径按钮最小点击面积 60×60px (Kitchen-Ready UI) */
-const MIN_BUTTON_SIZE = 60;
+import { theme } from "@/styles/theme";
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: theme.colors.background,
   },
   scrollContent: {
     flexGrow: 1,
     justifyContent: "center",
-    padding: 24,
-    paddingVertical: 32,
+    padding: theme.spacing.l,
+    paddingVertical: theme.spacing.xl,
   },
   title: {
-    fontSize: 20,
-    marginBottom: 24,
+    ...theme.typography.title,
+    color: theme.colors.textPrimary,
     textAlign: "center",
+    marginBottom: theme.spacing.l,
   },
   hint: {
+    ...theme.typography.caption,
     fontSize: 12,
-    color: "#6b7280",
-    marginBottom: 8,
+    color: theme.colors.textSecondary,
+    marginBottom: theme.spacing.s,
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 12,
-    marginBottom: 12,
-    borderRadius: 8,
-    fontSize: 16,
+    borderColor: theme.colors.border,
+    padding: theme.spacing.m,
+    marginBottom: theme.spacing.m,
+    borderRadius: theme.borderRadius.m,
+    ...theme.typography.body,
+    backgroundColor: theme.colors.surface,
+    color: theme.colors.textPrimary,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 2,
   },
   error: {
-    color: "#dc2626",
-    marginBottom: 12,
-    fontSize: 14,
+    color: theme.colors.danger,
+    marginBottom: theme.spacing.m,
+    ...theme.typography.caption,
   },
   button: {
-    minWidth: MIN_BUTTON_SIZE,
-    minHeight: MIN_BUTTON_SIZE,
-    backgroundColor: "#2563eb",
+    minHeight: theme.layout.touchableHeight,
+    backgroundColor: theme.colors.primary,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 8,
-    marginTop: 8,
+    borderRadius: theme.borderRadius.m,
+    marginTop: theme.spacing.s,
   },
   buttonPressed: { opacity: 0.8 },
-  buttonText: { color: "#fff", fontSize: 16 },
+  buttonText: {
+    color: theme.colors.textOnDark,
+    ...theme.typography.body,
+    fontWeight: "600",
+  },
   linkWrap: {
-    marginTop: 24,
+    marginTop: theme.spacing.l,
     alignItems: "center",
-    minHeight: 44,
+    minHeight: theme.layout.touchableHeight,
     justifyContent: "center",
   },
   link: {
-    color: "#2563eb",
-    fontSize: 16,
+    color: theme.colors.primary,
+    ...theme.typography.body,
   },
 });

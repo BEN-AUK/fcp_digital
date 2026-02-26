@@ -35,6 +35,8 @@ import { getStaffDoc } from "@/config/dbPaths";
 import type { StaffContext } from "@/types/auth";
 import { UniversalSignature } from "@/components/UniversalSignature";
 import type { UniversalSignatureViewRef } from "@/components/UniversalSignature";
+import { theme } from "@/styles/theme";
+import { ScreenContainer } from "@/components/common/ScreenContainer";
 import { joinStyles } from "./join.styles";
 
 type InviteContext = {
@@ -232,31 +234,36 @@ export default function JoinScreen() {
 
   if (status === "error") {
     return (
-      <View style={joinStyles.errorBox}>
-        <Text style={joinStyles.errorText}>
-          {errorReason === "used" ? t("auth.joinLinkUsed") : t("auth.joinInvalidToken")}
-        </Text>
-      </View>
+      <ScreenContainer>
+        <View style={joinStyles.errorBox}>
+          <Text style={joinStyles.errorText}>
+            {errorReason === "used" ? t("auth.joinLinkUsed") : t("auth.joinInvalidToken")}
+          </Text>
+        </View>
+      </ScreenContainer>
     );
   }
 
   if (status === "loading") {
     return (
-      <View style={joinStyles.loadingBox}>
-        <ActivityIndicator size="large" accessibilityLabel={t("common.loading")} />
-        <Text style={joinStyles.loadingText}>{t("auth.joinBinding")}</Text>
-      </View>
+      <ScreenContainer>
+        <View style={joinStyles.loadingBox}>
+          <ActivityIndicator size="large" color={theme.colors.primary} accessibilityLabel={t("common.loading")} />
+          <Text style={joinStyles.loadingText}>{t("auth.joinBinding")}</Text>
+        </View>
+      </ScreenContainer>
     );
   }
 
   if ((status === "form" || status === "submitting") && inviteContext) {
     return (
-      <KeyboardAvoidingView
-        style={joinStyles.screen as ViewStyle}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
-      >
-        <ScrollView
+      <ScreenContainer noPadding>
+        <KeyboardAvoidingView
+          style={joinStyles.screen as ViewStyle}
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
+        >
+          <ScrollView
           contentContainerStyle={{ flexGrow: 1 }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
@@ -270,7 +277,7 @@ export default function JoinScreen() {
               isNameError && (joinStyles.inputError as TextStyle),
             ]}
             placeholder={t("auth.joinDisplayNamePlaceholder")}
-            placeholderTextColor="#8E8E93"
+            placeholderTextColor={theme.colors.textMuted}
             value={displayName}
             onChangeText={handleNameChange}
             autoCapitalize="words"
@@ -304,18 +311,19 @@ export default function JoinScreen() {
             accessibilityLabel={t("auth.joinSubmit")}
           >
             {status === "submitting" ? (
-              <ActivityIndicator size="small" color="#FFFFFF" />
+              <ActivityIndicator size="small" color={theme.colors.textPrimary} />
             ) : (
               <Text style={joinStyles.submitButtonText as TextStyle}>{t("auth.joinSubmit")}</Text>
             )}
           </Pressable>
-        </ScrollView>
-        {showSuccess ? (
-          <View style={joinStyles.successOverlay} accessibilityLiveRegion="polite">
-            <Text style={joinStyles.successText as TextStyle}>{t("auth.joinSubmitSuccess")}</Text>
-          </View>
-        ) : null}
-      </KeyboardAvoidingView>
+          </ScrollView>
+          {showSuccess ? (
+            <View style={joinStyles.successOverlay} accessibilityLiveRegion="polite">
+              <Text style={joinStyles.successText as TextStyle}>{t("auth.joinSubmitSuccess")}</Text>
+            </View>
+          ) : null}
+        </KeyboardAvoidingView>
+      </ScreenContainer>
     );
   }
 

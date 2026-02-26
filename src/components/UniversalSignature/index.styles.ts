@@ -1,29 +1,30 @@
 import { StyleSheet } from "react-native";
+import { theme } from "@/styles/theme";
 
 export const universalSignatureStyles = StyleSheet.create({
   container: {
     width: "100%",
     height: 200,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: theme.colors.surface,
     borderWidth: 1,
-    borderColor: "#C6C6C8",
-    borderRadius: 8,
+    borderColor: theme.colors.border,
+    borderRadius: theme.borderRadius.m,
     overflow: "hidden",
   },
-  /** Clear button: ≥60px tap area per non-negotiables */
+  /** Clear button: ≥ touchableHeight tap area per non-negotiables */
   clearButton: {
-    minWidth: 60,
-    minHeight: 60,
+    minWidth: theme.layout.touchableHeight,
+    minHeight: theme.layout.touchableHeight,
     justifyContent: "center",
     alignItems: "center",
     alignSelf: "flex-end",
-    marginTop: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    marginTop: theme.spacing.s,
+    paddingHorizontal: theme.spacing.m,
+    paddingVertical: theme.spacing.m,
   },
   clearButtonText: {
-    fontSize: 16,
-    color: "#007AFF",
+    ...theme.typography.body,
+    color: theme.colors.primary,
     fontWeight: "500",
   },
 });

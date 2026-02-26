@@ -1,49 +1,62 @@
 import { StyleSheet } from "react-native";
-
-/** 核心路径按钮最小点击面积 60×60px (Kitchen-Ready UI) */
-const MIN_BUTTON_SIZE = 60;
+import { theme } from "@/styles/theme";
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    padding: 24,
+    paddingHorizontal: theme.spacing.m,
+    paddingVertical: theme.spacing.l,
+    backgroundColor: theme.colors.background,
   },
   title: {
-    fontSize: 20,
-    marginBottom: 24,
+    ...theme.typography.title,
+    color: theme.colors.textPrimary,
     textAlign: "center",
+    marginBottom: theme.spacing.l,
   },
   input: {
     borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 12,
-    marginBottom: 12,
-    borderRadius: 8,
+    borderColor: theme.colors.border,
+    paddingHorizontal: theme.spacing.m,
+    paddingVertical: theme.spacing.m,
+    marginBottom: theme.spacing.m,
+    borderRadius: theme.borderRadius.m,
+    backgroundColor: theme.colors.surface,
+    color: theme.colors.textPrimary,
+    ...theme.typography.body,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 2,
   },
   error: {
-    color: "red",
-    marginBottom: 12,
+    color: theme.colors.danger,
+    marginBottom: theme.spacing.m,
+    ...theme.typography.caption,
   },
   button: {
-    minWidth: MIN_BUTTON_SIZE,
-    minHeight: MIN_BUTTON_SIZE,
-    backgroundColor: "#2563eb",
+    minHeight: theme.layout.touchableHeight,
+    backgroundColor: theme.colors.primary,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 8,
-    marginTop: 8,
+    borderRadius: theme.borderRadius.m,
+    marginTop: theme.spacing.s,
   },
   buttonPressed: { opacity: 0.8 },
-  buttonText: { color: "#fff", fontSize: 16 },
+  buttonText: {
+    color: theme.colors.textOnDark,
+    ...theme.typography.body,
+    fontWeight: "600",
+  },
   linkWrap: {
-    marginTop: 24,
+    marginTop: theme.spacing.l,
     alignItems: "center",
-    minHeight: 60,
+    minHeight: theme.layout.touchableHeight,
     justifyContent: "center",
   },
   link: {
-    color: "#2563eb",
-    fontSize: 16,
+    color: theme.colors.primary,
+    ...theme.typography.body,
   },
 });

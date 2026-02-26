@@ -23,6 +23,24 @@ alwaysApply: true
 - **Firestore 实体一致性准则**: 所有对 Firestore 的读写操作必须参考 `src/models/` 下对应集合的模型接口（`User`、`Venue`、`Invite`）。未来增加新字段时，必须先更新 `src/models/` 中对应模型文件，再修改业务代码。
 
 ## 4. 样式隔离与 UI 规范 (Styling & CSS Architecture)
+
+### 4.1 单一数据源 (Single Source of Truth)
+- **Theme 强制**: 颜色、间距、字号、圆角必须全部来自 `@/styles/theme`。严禁硬编码 hex 颜色或像素数值。
+
+### 4.2 工业可用性 (Industrial Utility)
+- **触控区域 (Touch Targets)**: 可交互元素最小高度/宽度 44px，优先使用 `theme.layout.touchableHeight`。
+- **可读性 (Readability)**: 标签使用 `theme.typography.body`；字号不得低于 13px。
+
+### 4.3 跨平台布局 (Cross-Platform Layout)
+- **屏幕容器**: 所有屏幕必须使用（或被包裹于）在 Web 上 `maxWidth: 600` 且水平居中的容器。
+- **样式写法**: 使用 `StyleSheet.create` 定义样式；仅在值为动态时使用内联样式。
+
+### 4.4 视觉层级 (Visual Hierarchy)
+- **主标题 (Main Titles)**: 居中、28px（title 风格）、加粗。
+- **卡片/表面 (Cards / Surface)**: 使用 1px 细边框 `rgba(255,255,255,0.1)` 与背景区分。
+- **空状态 (Empty States)**: 列表必须提供统一样式的「无数据」提示，保持界面专业一致。
+
+### 4.5 其他
 - **CSS 分离原则**:
   - **Tailwind 限制**: 单个元素严禁堆叠超过 6 个 Tailwind 类名。超过必须抽离至 CSS Modules。
   - **100dvh 适配**: 所有全屏页面必须使用 `height: 100dvh` 以解决移动端浏览器工具栏遮挡问题。

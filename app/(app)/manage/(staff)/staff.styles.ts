@@ -1,32 +1,27 @@
 import { StyleSheet } from "react-native";
+import { theme } from "@/styles/theme";
 
-/** 核心路径按钮最小点击面积 60×60px (Kitchen-Ready UI) */
-const MIN_BUTTON_SIZE = 60;
-
-/** Staff 页：当前场馆在岗员工列表，每行姓名 + 移除按钮（软删除 isActive=false）。 */
+/** Staff 页：当前场馆在岗员工列表，每行姓名 + 移除按钮。工业高能效：surface 卡片、12px 圆角、72–80px 行高。 */
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
     minHeight: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 24,
-    backgroundColor: "#fff",
+    backgroundColor: theme.colors.background,
   },
   scrollSection: {
     width: "100%",
-    maxWidth: 400,
+    flex: 1,
   },
   scrollContent: {
     alignItems: "stretch",
-    paddingBottom: 24,
+    paddingBottom: theme.spacing.l,
   },
   listTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#000",
-    marginTop: 24,
-    marginBottom: 12,
+    ...theme.typography.title,
+    color: theme.colors.textPrimary,
+    textAlign: "center",
+    marginTop: theme.spacing.l,
+    marginBottom: theme.spacing.m,
   },
   list: {
     width: "100%",
@@ -36,35 +31,43 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    marginBottom: 8,
-    backgroundColor: "#f9fafb",
-    borderRadius: 8,
+    minHeight: 72,
+    maxHeight: 80,
+    paddingVertical: theme.spacing.m,
+    paddingHorizontal: theme.spacing.m,
+    marginBottom: theme.spacing.s,
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.l,
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: theme.colors.border,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  listItemLeft: {
+    flex: 1,
+    marginRight: theme.spacing.m,
+    justifyContent: "center",
   },
   listItemName: {
-    flex: 1,
-    fontSize: 16,
+    ...theme.typography.body,
     fontWeight: "600",
-    color: "#111827",
-    marginRight: 12,
+    color: theme.colors.textPrimary,
   },
   listItemDeleteButton: {
-    minWidth: MIN_BUTTON_SIZE,
-    minHeight: MIN_BUTTON_SIZE,
-    backgroundColor: "#dc2626",
+    minWidth: theme.layout.touchableHeight,
+    minHeight: theme.layout.touchableHeight,
+    backgroundColor: theme.colors.danger,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 8,
+    borderRadius: theme.borderRadius.m,
   },
   listItemDeleteButtonPressed: {
     opacity: 0.8,
   },
   listItemButtonText: {
-    color: "#fff",
-    fontSize: 14,
-    fontWeight: "600",
+    color: theme.colors.textOnDark,
+    ...theme.typography.caption,
   },
 });

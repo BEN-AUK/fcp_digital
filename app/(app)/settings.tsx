@@ -3,6 +3,8 @@ import { View, Text, Pressable, Modal, type ViewStyle, type TextStyle } from "re
 import { useTranslation } from "react-i18next";
 import { Ionicons } from "@expo/vector-icons";
 import { useSettingsStore, type LanguageCode } from "@/stores/settingsStore";
+import { theme } from "@/styles/theme";
+import { ScreenContainer } from "@/components/common/ScreenContainer";
 import { settingsStyles } from "./settings/settings.styles";
 
 const LANGUAGE_OPTIONS: { code: LanguageCode; label: string }[] = [
@@ -25,12 +27,12 @@ export default function SettingsScreen() {
   };
 
   return (
-    <View style={settingsStyles.screen as ViewStyle}>
+    <ScreenContainer style={settingsStyles.screen as ViewStyle}>
       <View style={settingsStyles.list as ViewStyle}>
         <View style={settingsStyles.row as ViewStyle}>
           <View style={settingsStyles.rowLeft as ViewStyle}>
             <View style={settingsStyles.iconWrap as ViewStyle}>
-              <Ionicons name="language" size={18} color="#000000" />
+              <Ionicons name="language" size={18} color={theme.colors.textPrimary} />
             </View>
             <Text style={settingsStyles.rowLabel as TextStyle}>{t("settings.language")}</Text>
           </View>
@@ -73,6 +75,6 @@ export default function SettingsScreen() {
           </Pressable>
         </Pressable>
       </Modal>
-    </View>
+    </ScreenContainer>
   );
 }

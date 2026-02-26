@@ -1,36 +1,32 @@
 import { StyleSheet } from "react-native";
+import { theme } from "@/styles/theme";
 
-/** 核心路径按钮最小点击面积 60×60px (Kitchen-Ready UI) */
-const MIN_BUTTON_SIZE = 60;
-
-/** 员工授权页：顶部标题 + 生成二维码按钮，风格与 Authorise staff 参考图一致。 */
+/** 员工授权页：标题 + 生成二维码按钮，工业高能效主题。 */
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: theme.colors.background,
   },
   containerContent: {
     alignItems: "center",
-    padding: 24,
-    paddingTop: 32,
-    paddingBottom: 32,
+    padding: theme.spacing.l,
+    paddingTop: theme.spacing.xl,
+    paddingBottom: theme.spacing.xl,
   },
   header: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#111827",
+    ...theme.typography.title,
+    color: theme.colors.textPrimary,
     textAlign: "center",
-    marginBottom: 24,
+    marginBottom: theme.spacing.l,
   },
   primaryButton: {
-    minWidth: MIN_BUTTON_SIZE,
-    minHeight: MIN_BUTTON_SIZE,
+    minHeight: theme.layout.touchableHeight,
     width: "100%",
     maxWidth: 400,
-    backgroundColor: "#2563eb",
+    backgroundColor: theme.colors.primary,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 8,
+    borderRadius: theme.borderRadius.m,
   },
   primaryButtonPressed: {
     opacity: 0.8,
@@ -39,35 +35,38 @@ export const styles = StyleSheet.create({
     opacity: 0.6,
   },
   primaryButtonText: {
-    color: "#fff",
-    fontSize: 16,
+    color: theme.colors.textOnDark,
+    ...theme.typography.body,
     fontWeight: "600",
   },
   linkSection: {
     width: "100%",
     maxWidth: 400,
-    marginTop: 24,
+    marginTop: theme.spacing.l,
   },
   linkLabel: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#6b7280",
-    marginBottom: 8,
+    ...theme.typography.caption,
+    color: theme.colors.textSecondary,
+    marginBottom: theme.spacing.s,
   },
   linkText: {
-    fontSize: 14,
-    color: "#2563eb",
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    backgroundColor: "#f3f4f6",
-    borderRadius: 8,
+    ...theme.typography.caption,
+    color: theme.colors.primary,
+    paddingVertical: theme.spacing.m,
+    paddingHorizontal: theme.spacing.m,
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.m,
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: theme.colors.border,
+    shadowColor: "#000",
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 2,
   },
   qrSection: {
     width: "100%",
     maxWidth: 400,
-    marginTop: 24,
+    marginTop: theme.spacing.l,
     alignItems: "center",
     justifyContent: "center",
   },

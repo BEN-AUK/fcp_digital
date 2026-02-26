@@ -3,6 +3,8 @@ import { View, ActivityIndicator } from "react-native";
 import { useRouter, type Href } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { useVenueStore } from "@/stores/venueStore";
+import { theme } from "@/styles/theme";
+import { ScreenContainer } from "@/components/common/ScreenContainer";
 import { styles } from "./index.styles";
 
 export default function IndexScreen() {
@@ -21,8 +23,8 @@ export default function IndexScreen() {
   }, [isVenueReady, isAuthenticated, router]);
 
   return (
-    <View style={styles.container}>
-      <ActivityIndicator size="large" accessibilityLabel={t("common.loading")} />
-    </View>
+    <ScreenContainer style={styles.container}>
+      <ActivityIndicator size="large" color={theme.colors.primary} accessibilityLabel={t("common.loading")} />
+    </ScreenContainer>
   );
 }

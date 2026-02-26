@@ -5,6 +5,7 @@ import { useNavigation } from "expo-router";
 import Head from "expo-router/head";
 import { useVenueStore } from "@/stores/venueStore";
 import { subscribeActiveUsers, deactivateUser, type VenueUserRecord } from "@/auth/venueUsers";
+import { ScreenContainer } from "@/components/common/ScreenContainer";
 import { styles } from "./staff.styles";
 
 export default function ManageStaffScreen() {
@@ -53,7 +54,7 @@ export default function ManageStaffScreen() {
       <Head>
         <title>{t("manage.manage_staff")}</title>
       </Head>
-      <View style={styles.container}>
+      <ScreenContainer style={styles.container}>
         <ScrollView
           style={styles.scrollSection}
           contentContainerStyle={styles.scrollContent}
@@ -63,7 +64,9 @@ export default function ManageStaffScreen() {
           <View style={styles.list}>
             {users.map((user) => (
               <View key={user.staffId} style={styles.listItem}>
-                <Text style={styles.listItemName}>{user.displayName || user.staffId}</Text>
+                <View style={styles.listItemLeft}>
+                  <Text style={styles.listItemName}>{user.displayName || user.staffId}</Text>
+                </View>
                 <Pressable
                   style={({ pressed }) => [
                     styles.listItemDeleteButton,
@@ -79,7 +82,7 @@ export default function ManageStaffScreen() {
             ))}
           </View>
         </ScrollView>
-      </View>
+      </ScreenContainer>
     </>
   );
 }

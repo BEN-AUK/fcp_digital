@@ -9,10 +9,9 @@ import { View, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useVenueStore } from "@/stores/venueStore";
 import { useSettingsStore } from "@/stores/settingsStore";
+import { theme } from "@/styles/theme";
 import i18n from "@/i18n";
 
-const TAB_ACTIVE = "#7F57F1";
-const TAB_INACTIVE = "#999999";
 const ICON_SIZE = 24;
 
 const tabIconStyles = StyleSheet.create({
@@ -23,8 +22,8 @@ const tabIconStyles = StyleSheet.create({
   indicator: {
     width: 24,
     height: 2,
-    backgroundColor: TAB_ACTIVE,
-    marginTop: 4,
+    backgroundColor: theme.colors.tabBarActive,
+    marginTop: theme.spacing.xs,
     borderRadius: 1,
   },
 });
@@ -33,7 +32,7 @@ function TabIcon({
   name,
   focused,
 }: { name: keyof typeof Ionicons.glyphMap; focused: boolean }) {
-  const color = focused ? TAB_ACTIVE : TAB_INACTIVE;
+  const color = focused ? theme.colors.tabBarActive : theme.colors.tabBarInactive;
   return (
     <View style={tabIconStyles.wrapper}>
       <Ionicons name={name} size={ICON_SIZE} color={color} />
@@ -64,20 +63,19 @@ export default function AppLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: TAB_ACTIVE,
-        tabBarInactiveTintColor: TAB_INACTIVE,
+        tabBarActiveTintColor: theme.colors.tabBarActive,
+        tabBarInactiveTintColor: theme.colors.tabBarInactive,
         tabBarStyle: {
           height: 80,
-          paddingBottom: 24,
-          paddingTop: 10,
-          backgroundColor: "#FFFFFF",
-          borderTopWidth: 1,
-          borderTopColor: "#EEEEEE",
+          paddingBottom: theme.spacing.l,
+          paddingTop: theme.spacing.s,
+          backgroundColor: theme.colors.tabBarBackground,
+          borderTopWidth: 0,
         },
         tabBarLabelStyle: {
           fontSize: 12,
           fontWeight: "500",
-          marginTop: 4,
+          marginTop: theme.spacing.xs,
         },
       }}
       initialRouteName="(home)/home"

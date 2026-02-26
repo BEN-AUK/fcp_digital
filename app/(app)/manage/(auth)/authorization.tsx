@@ -6,6 +6,7 @@ import { useFocusEffect } from "expo-router";
 import QRCode from "react-native-qrcode-svg";
 import { useVenueStore } from "@/stores/venueStore";
 import { createStaffInvite } from "@/auth/inviteToken";
+import { ScreenContainer } from "@/components/common/ScreenContainer";
 import { styles } from "./authorization.styles";
 
 export default function StaffAuthorizationScreen() {
@@ -37,11 +38,12 @@ export default function StaffAuthorizationScreen() {
       <Head>
         <title>{t("manage.authorise_staff")}</title>
       </Head>
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.containerContent}
-        keyboardShouldPersistTaps="handled"
-      >
+      <ScreenContainer>
+        <ScrollView
+          style={styles.container}
+          contentContainerStyle={styles.containerContent}
+          keyboardShouldPersistTaps="handled"
+        >
         <Text style={styles.header}>{t("manage.authorise_staff")}</Text>
         <Pressable
           style={({ pressed }) => [
@@ -73,7 +75,8 @@ export default function StaffAuthorizationScreen() {
             </View>
           </>
         )}
-      </ScrollView>
+        </ScrollView>
+      </ScreenContainer>
     </>
   );
 }

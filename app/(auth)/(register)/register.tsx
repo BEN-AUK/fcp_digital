@@ -11,6 +11,8 @@ import {
 import { useRouter, Link, type Href } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { useVenueAuth } from "@/auth/useVenueAuth";
+import { theme } from "@/styles/theme";
+import { ScreenContainer } from "@/components/common/ScreenContainer";
 import { styles } from "./register.styles";
 
 export default function RegisterScreen() {
@@ -59,52 +61,57 @@ export default function RegisterScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
-    >
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
+    <ScreenContainer noPadding>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
       >
-        <Text style={styles.title}>{t("auth.registerTitle")}</Text>
-        <TextInput
-          style={styles.input}
-          placeholder={t("auth.email")}
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          keyboardType="email-address"
-          autoComplete="email"
-          editable={!loading}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder={t("auth.shopName")}
-          value={shopName}
-          onChangeText={setShopName}
-          autoComplete="off"
-          editable={!loading}
-        />
-        <Text style={styles.hint}>{t("auth.passwordRules")}</Text>
-        <TextInput
-          style={styles.input}
-          placeholder={t("auth.password")}
-          value={password}
-          onChangeText={setPassword}
-          autoComplete="new-password"
-          editable={!loading}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder={t("auth.confirmPassword")}
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          autoComplete="new-password"
-          editable={!loading}
-        />
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <Text style={styles.title}>{t("auth.registerTitle")}</Text>
+          <TextInput
+            style={styles.input}
+            placeholder={t("auth.email")}
+            placeholderTextColor={theme.colors.textMuted}
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            autoComplete="email"
+            editable={!loading}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder={t("auth.shopName")}
+            placeholderTextColor={theme.colors.textMuted}
+            value={shopName}
+            onChangeText={setShopName}
+            autoComplete="off"
+            editable={!loading}
+          />
+          <Text style={styles.hint}>{t("auth.passwordRules")}</Text>
+          <TextInput
+            style={styles.input}
+            placeholder={t("auth.password")}
+            placeholderTextColor={theme.colors.textMuted}
+            value={password}
+            onChangeText={setPassword}
+            autoComplete="new-password"
+            editable={!loading}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder={t("auth.confirmPassword")}
+            placeholderTextColor={theme.colors.textMuted}
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            autoComplete="new-password"
+            editable={!loading}
+          />
         {error ? <Text style={styles.error}>{error}</Text> : null}
         <Pressable
           style={({ pressed }) => [styles.button, pressed && styles.buttonPressed]}
@@ -123,7 +130,8 @@ export default function RegisterScreen() {
             <Text style={styles.link}>{t("auth.goToLogin")}</Text>
           </Pressable>
         </Link>
-      </ScrollView>
-    </KeyboardAvoidingView>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </ScreenContainer>
   );
 }
