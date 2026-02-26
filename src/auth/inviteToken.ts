@@ -56,7 +56,6 @@ function generateInviteId(): string {
 export type StaffInviteRecord = {
   id: string;
   token: string;
-  staffName: string;
   status: InviteStatus;
   createdAt?: Timestamp;
 };
@@ -135,7 +134,6 @@ export function parseInviteTokenPayload(token: string): InviteTokenPayload | nul
 export type ValidatedInvite = {
   venueId: string;
   staffId: string;
-  staffName: string;
   venueName: string;
 };
 
@@ -151,7 +149,6 @@ export async function validateInviteToken(token: string): Promise<ValidatedInvit
   if (!snap.exists()) return null;
   const data = snap.data() as Invite | undefined;
   const venueId = data?.venueId;
-  const staffName = data?.staffName ?? "Staff";
   const status = data?.status;
   const expiresAt = data?.expiresAt;
   if (!venueId) return null;
@@ -169,7 +166,6 @@ export async function validateInviteToken(token: string): Promise<ValidatedInvit
   return {
     venueId,
     staffId: snap.id,
-    staffName,
     venueName,
   };
 }
@@ -177,7 +173,6 @@ export async function validateInviteToken(token: string): Promise<ValidatedInvit
 /**
  * Create a staff invite in Firestore (invites collection) and return the join URL.
  * Caller must pass current venueId (owner context). All writes carry venueId for security.
- * Token and stored invite do not contain employee name; generic "Staff" is used.
  */
 export async function createStaffInvite(venueId: string): Promise<{ url: string; token: string }> {
   const db = getFirestoreDb();
@@ -186,7 +181,6 @@ export async function createStaffInvite(venueId: string): Promise<{ url: string;
   const inviteData: InviteWrite = {
     inviteId: generateInviteId(),
     venueId,
-    staffName: "Staff",
     token,
     status: "pending",
     createdAt: serverTimestamp(),
@@ -207,13 +201,12 @@ export function subscribeStaffInvites(
     collection(db, "invites"),
     where("venueId", "==", venueId)
   );
-  const unsubscribe =   onSnapshot(q, (snap) => {
+  const unsubscribe = onSnapshot(q, (snap) => {
     const invites: StaffInviteRecord[] = snap.docs.map((d) => {
       const dta = d.data() as Invite;
       return {
         id: d.id,
         token: dta.token ?? d.id,
-        staffName: dta.staffName ?? "Staff",
         status: (dta.status ?? "pending") as InviteStatus,
         createdAt: dta.createdAt,
       };
@@ -246,10 +239,7 @@ export async function setInviteCompleted(token: string): Promise<void> {
  * Create an invite document in Firestore (invites collection).
  * Uses doc id as token. Caller must have venueId (owner context).
  */
-export async function createInvite(
-  venueId: string,
-  staffName: string
-): Promise<{ token: string }> {
+export async function createInvite(venueId: string): Promise<{ token: string }> {
   const db = getFirestoreDb();
   const ref = doc(collection(db, "invites"));
   const expiresAt = Timestamp.fromMillis(
@@ -258,7 +248,6 @@ export async function createInvite(
   const inviteData: InviteWrite = {
     inviteId: generateInviteId(),
     venueId,
-    staffName: staffName.trim() || "Staff",
     token: ref.id,
     expiresAt,
   };

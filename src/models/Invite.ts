@@ -11,7 +11,6 @@ export interface Invite {
   /** UUID, required for every document in invites collection. */
   inviteId: string;
   venueId: string;
-  staffName: string;
   token: string;
   /** Status-based flow (createStaffInvite); updateDoc sets status to "revoked" or "completed". */
   status?: InviteStatus;
