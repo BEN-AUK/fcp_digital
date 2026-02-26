@@ -44,6 +44,16 @@ export default function ManageLayout() {
           header: () => null,
         }}
       />
+      <Stack.Screen
+        name="add-device-scanner"
+        options={{
+          title: "",
+          presentation: "formSheet",
+          sheetGrabberVisible: true,
+          headerShown: false,
+          header: () => null,
+        }}
+      />
     </Stack>
   );
 }

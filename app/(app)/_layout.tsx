@@ -106,6 +106,8 @@ export default function AppLayout() {
           href: (isVenueOwner ? "/manage/manage" : null) as "/manage/manage" | null,
         }}
       />
+      <Tabs.Screen name="devices" options={{ href: null }} />
+      <Tabs.Screen name="add-device-scanner" options={{ href: null }} />
     </Tabs>
   );
 }

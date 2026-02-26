@@ -1,13 +1,20 @@
 import { StyleSheet } from "react-native";
 import { theme } from "@/styles/theme";
 
+/** Device Management: 设备管理主页，灰白背景、居中标题与主操作按钮。 */
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
     minHeight: "100%",
     backgroundColor: theme.colors.background,
     padding: theme.spacing.l,
-    justifyContent: "flex-end",
+    justifyContent: "space-between",
+  },
+  title: {
+    ...theme.typography.title,
+    color: theme.colors.textPrimary,
+    textAlign: "center",
+    marginTop: theme.spacing.xl,
   },
   mainButton: {
     minHeight: theme.layout.mainButtonHeight,
