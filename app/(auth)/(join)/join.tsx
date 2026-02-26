@@ -151,6 +151,12 @@ export default function JoinScreen() {
     const ctx = inviteContext;
     if (!ctx || !token) return;
 
+    if (!signature || !signature.trim()) {
+      setStatus("form");
+      setSubmitError(t("auth.joinErrorSignatureRequired"));
+      return;
+    }
+
     setStatus("submitting");
     setSubmitError(null);
     (async () => {
@@ -198,6 +204,12 @@ export default function JoinScreen() {
     sigRef.current?.readSignature();
   };
 
+  const isNameError = submitError === t("auth.joinErrorNameRequired");
+  const handleNameChange = (text: string) => {
+    setDisplayName(text);
+    if (submitError === t("auth.joinErrorNameRequired")) setSubmitError(null);
+  };
+
   const handleSignatureEmpty = () => {
     if (pendingSubmitRef.current) {
       pendingSubmitRef.current = null;
@@ -241,14 +253,18 @@ export default function JoinScreen() {
 
           <Text style={joinStyles.fieldLabel as TextStyle}>{t("auth.joinDisplayNameLabel")}</Text>
           <TextInput
-            style={joinStyles.input as TextStyle}
+            style={[
+              joinStyles.input as ViewStyle,
+              isNameError && (joinStyles.inputError as ViewStyle),
+            ]}
             placeholder={t("auth.joinDisplayNamePlaceholder")}
             placeholderTextColor="#8E8E93"
             value={displayName}
-            onChangeText={setDisplayName}
+            onChangeText={handleNameChange}
             autoCapitalize="words"
             editable={status !== "submitting"}
             accessibilityLabel={t("auth.joinDisplayNameLabel")}
+            accessibilityState={{ invalid: isNameError }}
           />
 
           <Text style={[joinStyles.fieldLabel, joinStyles.signatureSection] as StyleProp<TextStyle>}>

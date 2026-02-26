@@ -52,6 +52,9 @@ export const joinStyles = StyleSheet.create({
     marginBottom: 20,
     minHeight: 48,
   },
+  inputError: {
+    borderColor: "#FF3B30",
+  },
   signatureSection: {
     marginBottom: 24,
   },
