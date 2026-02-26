@@ -101,3 +101,12 @@ export function getDeviceDoc(
   const db = getFirestoreDb();
   return doc(db, "venues", venueId, "devices", deviceId) as DeviceDocumentRef;
 }
+
+/**
+ * Returns the document reference for an AI task config.
+ * Path: systemConfig/ai_tasks/tasks/{taskId}
+ */
+export function getAiTaskDoc(taskId: string): DocumentReference {
+  const db = getFirestoreDb();
+  return doc(db, "systemConfig", "ai_tasks", "tasks", taskId);
+}
