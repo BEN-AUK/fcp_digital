@@ -10,6 +10,7 @@ import { useVenueAuth } from "@/auth/useVenueAuth";
 import { fetchOwnerStaffFromCloud } from "@/auth/syncOwnerStaff";
 import { useVenueStore } from "@/stores/venueStore";
 import { useStaffStore } from "@/stores/staffStore";
+import { initializeSystemSettings } from "@/utils/seedData";
 
 /** 加载态：Firebase 校验 Token 期间不挂载任何业务路由，防止闪烁或权限泄露 */
 function AuthLoadingScreen() {
@@ -34,6 +35,10 @@ export default function RootLayout() {
   const pathname = usePathname();
   const segments = useSegments();
   useVenueAuth();
+
+  useEffect(() => {
+    initializeSystemSettings();
+  }, []);
 
   const isReady = useVenueStore((s) => s.isReady);
   const isAuthenticated = useVenueStore((s) => s.isAuthenticated);

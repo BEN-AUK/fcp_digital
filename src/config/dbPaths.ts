@@ -7,6 +7,7 @@ import {
 import { getFirestoreDb } from "@/config/firebase";
 import type { User } from "@/models/User";
 import type { Invite } from "@/models/Invite";
+import type { Device, SystemDeviceType } from "@/types/Device";
 
 /** Collection ref for venue staff: venues/{venueId}/users */
 export type StaffCollectionRef = CollectionReference<User>;
@@ -16,6 +17,27 @@ export type StaffDocumentRef = DocumentReference<User>;
 export type InviteCollectionRef = CollectionReference<Invite>;
 /** Document ref for an invite: venues/{venueId}/invites/{inviteId} */
 export type InviteDocumentRef = DocumentReference<Invite>;
+/** Collection ref for venue devices: venues/{venueId}/devices */
+export type DeviceCollectionRef = CollectionReference<Device>;
+/** Document ref for a device: venues/{venueId}/devices/{deviceId} */
+export type DeviceDocumentRef = DocumentReference<Device>;
+/** Collection ref for system device types: systemConfig/deviceSettings/deviceTypes */
+export type SystemDeviceTypesCollectionRef =
+  CollectionReference<SystemDeviceType>;
+
+/**
+ * Returns the system device types collection reference.
+ * Path: systemConfig/deviceSettings/deviceTypes
+ */
+export function getSystemDeviceTypesCol(): SystemDeviceTypesCollectionRef {
+  const db = getFirestoreDb();
+  return collection(
+    db,
+    "systemConfig",
+    "deviceSettings",
+    "deviceTypes"
+  ) as SystemDeviceTypesCollectionRef;
+}
 
 /**
  * Returns the staff subcollection reference for a venue.
@@ -57,4 +79,25 @@ export function getInviteDoc(
 ): InviteDocumentRef {
   const db = getFirestoreDb();
   return doc(db, "venues", venueId, "invites", inviteId) as InviteDocumentRef;
+}
+
+/**
+ * Returns the devices subcollection reference for a venue.
+ * Path: venues/{venueId}/devices
+ */
+export function getDeviceCol(venueId: string): DeviceCollectionRef {
+  const db = getFirestoreDb();
+  return collection(db, "venues", venueId, "devices") as DeviceCollectionRef;
+}
+
+/**
+ * Returns the document reference for a device in a venue.
+ * Path: venues/{venueId}/devices/{deviceId}
+ */
+export function getDeviceDoc(
+  venueId: string,
+  deviceId: string
+): DeviceDocumentRef {
+  const db = getFirestoreDb();
+  return doc(db, "venues", venueId, "devices", deviceId) as DeviceDocumentRef;
 }

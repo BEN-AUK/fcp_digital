@@ -34,6 +34,16 @@ export default function ManageLayout() {
           header: () => null,
         }}
       />
+      <Stack.Screen
+        name="(device)/device"
+        options={{
+          title: "",
+          presentation: "formSheet",
+          sheetGrabberVisible: true,
+          headerShown: false,
+          header: () => null,
+        }}
+      />
     </Stack>
   );
 }

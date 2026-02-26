@@ -64,6 +64,11 @@ export default function ManageIndexScreen() {
     router.push("/manage/authorization");
   };
 
+  const handleOpenManageDevice = () => {
+    setShowMenu(false);
+    router.push("/manage/device");
+  };
+
   const handleDismiss = () => {
     setShowMenu(false);
   };
@@ -135,6 +140,31 @@ export default function ManageIndexScreen() {
                 />
                 <Text style={styles.menuItemText}>
                   {t("manage.staff_authorization")}
+                </Text>
+                <Ionicons
+                  name="chevron-forward"
+                  size={20}
+                  color={theme.colors.textSecondary}
+                  style={styles.menuItemChevron}
+                />
+              </Pressable>
+              <Pressable
+                style={({ pressed }) => [
+                  styles.menuItem,
+                  pressed && styles.menuItemPressed,
+                ]}
+                onPress={handleOpenManageDevice}
+                accessibilityRole="button"
+                accessibilityLabel={t("manage.manage_device")}
+              >
+                <Ionicons
+                  name="phone-portrait-outline"
+                  size={22}
+                  color={theme.colors.textPrimary}
+                  style={styles.menuItemIcon}
+                />
+                <Text style={styles.menuItemText}>
+                  {t("manage.manage_device")}
                 </Text>
                 <Ionicons
                   name="chevron-forward"
