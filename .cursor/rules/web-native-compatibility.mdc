@@ -1,0 +1,21 @@
+---
+description: React Native Web 与 Native 兼容性（弹窗、API 行为差异）
+alwaysApply: true
+---
+
+# Web / Native 兼容性 (React Native Web)
+
+## 原则
+- 使用 React Native API 时，必须考虑 **Web 平台行为差异**；在 Web 上许多 RN API 为 no-op 或行为不同，会导致回调不执行、UI 卡死。
+- 需要**按平台分支**时：用 `Platform.OS === 'web'` 区分 Web，在 Web 使用浏览器/标准 API，在 Native 使用 RN API。
+
+## 弹窗 (Alert / Confirm)
+- **禁止**在 Web 上依赖 `Alert.alert(title, message, buttons)` 的多按钮形式：在 React Native Web 上多为 no-op，弹窗不显示，回调（如 onPress）不执行，易导致提交按钮一直转圈、流程卡死。
+- **正确做法**：
+  - **Web**：使用 `window.confirm(message)`（或自定义 Modal）。根据返回值 true/false 分别执行“确认”“取消”逻辑。
+  - **Native (iOS/Android)**：继续使用 `Alert.alert(..., [ { text, onPress }, ... ])`。
+- 单按钮 `Alert.alert(title, message)` 在 Web 上可能可用，但若涉及关键流程或回调，仍建议按平台分支，避免隐性 no-op。
+
+## 参考实现
+- 确认/取消二选一：见 `src/components/UniversalSignature/WebSignature.tsx`（Web 用 `window.confirm` + onOK/onTooSimple）、`NativeSignature.tsx`（Native 用 `Alert.alert` 多按钮）。
+- 其他 RN 原生 API（如部分手势、原生模块）在 Web 上不可用或行为不同时，同样采用 `Platform.OS === 'web'` 分支或平台专属组件。
