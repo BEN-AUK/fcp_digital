@@ -28,6 +28,7 @@ import {
 } from "@/auth/inviteToken";
 import { saveStaffOnboarding, getDeviceId } from "@/auth/staffOnboarding";
 import { useStaffStore } from "@/stores/staffStore";
+import { useVenueStore } from "@/stores/venueStore";
 import { doc, getDoc } from "firebase/firestore";
 import { getFirestoreDb } from "@/config/firebase";
 import type { StaffContext } from "@/types/auth";
@@ -46,7 +47,8 @@ type InviteContext = {
 export default function JoinScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const params = useLocalSearchParams<{ t?: string }>();
+  const params = useLocalSearchParams<{ t?: string; owner?: string }>();
+  const venue = useVenueStore((s) => s.venue);
   const [status, setStatus] = useState<"loading" | "error" | "form" | "submitting">("loading");
   const [errorReason, setErrorReason] = useState<"invalid" | "used" | null>(null);
   const [inviteContext, setInviteContext] = useState<InviteContext | null>(null);
@@ -63,6 +65,26 @@ export default function JoinScreen() {
     let cancelled = false;
 
     async function run() {
+      if (params.owner === "1") {
+        if (!venue) return;
+        const db = getFirestoreDb();
+        const venueRef = doc(db, "venues", venue.venueId);
+        const venueSnap = await getDoc(venueRef);
+        if (cancelled) return;
+        const venueName =
+          (venueSnap.exists() && venueSnap.data()?.shopName) || venue.venueId;
+        if (!cancelled) {
+          setInviteContext({
+            staffId: venue.uid,
+            venueId: venue.venueId,
+            venueName,
+          });
+          setErrorReason(null);
+          setStatus("form");
+        }
+        return;
+      }
+
       const raw =
         typeof params.t === "string" ? params.t : await getJoinTokenFromUrl();
       const tokenValue = raw?.trim() ? decodeURIComponent(raw.trim()) : null;
@@ -141,7 +163,7 @@ export default function JoinScreen() {
     return () => {
       cancelled = true;
     };
-  }, [params.t]);
+  }, [params.t, params.owner, venue?.uid, venue?.venueId]);
 
   const handleSignatureOK = (signature: string) => {
     const pending = pendingSubmitRef.current;
@@ -149,7 +171,8 @@ export default function JoinScreen() {
     pendingSubmitRef.current = null;
 
     const ctx = inviteContext;
-    if (!ctx || !token) return;
+    const isOwnerFlow = params.owner === "1";
+    if (!ctx || (!token && !isOwnerFlow)) return;
 
     if (!signature || !signature.trim()) {
       setStatus("form");
@@ -169,7 +192,7 @@ export default function JoinScreen() {
           signature,
           deviceId,
         });
-        setInviteCompleted(token).catch(() => {});
+        if (token) setInviteCompleted(token).catch(() => {});
 
         const staff: StaffContext = {
           staffId: ctx.staffId,
@@ -215,6 +238,14 @@ export default function JoinScreen() {
       pendingSubmitRef.current = null;
       setStatus("form");
       setSubmitError(t("auth.joinErrorSignatureRequired"));
+    }
+  };
+
+  const handleSignatureTooSimple = () => {
+    if (pendingSubmitRef.current) {
+      pendingSubmitRef.current = null;
+      setStatus("form");
+      setSubmitError(t("auth.signature_too_simple"));
     }
   };
 
@@ -274,6 +305,7 @@ export default function JoinScreen() {
             ref={sigRef}
             onOK={handleSignatureOK}
             onEmpty={handleSignatureEmpty}
+            onTooSimple={handleSignatureTooSimple}
           />
 
           {submitError ? (

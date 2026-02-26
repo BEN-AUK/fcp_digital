@@ -50,7 +50,7 @@ export default function RegisterScreen() {
     setLoading(true);
     try {
       await signUp(trimmedEmail, password, shopName.trim());
-      router.replace("/(app)/(home)/home" as Href);
+      router.replace("/join?owner=1" as Href);
     } catch (e) {
       setError(e instanceof Error ? e.message : t("auth.errorRegistrationFailed"));
     } finally {

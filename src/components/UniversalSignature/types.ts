@@ -10,4 +10,6 @@ export type UniversalSignatureViewRef = {
 export type UniversalSignatureProps = {
   onOK?: (signature: string) => void;
   onEmpty?: () => void;
+  /** Called when signature fails density validation (e.g. too simple). Parent should reset submitting state. */
+  onTooSimple?: () => void;
 };

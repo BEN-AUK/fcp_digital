@@ -4,8 +4,10 @@ import { Stack, useRouter, usePathname, type Href } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useFonts } from "expo-font";
 import { Ionicons } from "@expo/vector-icons";
+import { doc, getDoc } from "firebase/firestore";
 import { useVenueAuth } from "@/auth/useVenueAuth";
 import { useVenueStore } from "@/stores/venueStore";
+import { getFirestoreDb } from "@/config/firebase";
 
 export default function RootLayout() {
   const router = useRouter();
@@ -13,6 +15,7 @@ export default function RootLayout() {
   useVenueAuth();
   const isVenueReady = useVenueStore((s) => s.isReady);
   const isAuthenticated = useVenueStore((s) => s.isAuthenticated);
+  const venue = useVenueStore((s) => s.venue);
 
   const [fontsLoaded, fontError] = useFonts({
     ...Ionicons.font,
@@ -26,13 +29,25 @@ export default function RootLayout() {
       (typeof window !== "undefined" && window.location?.pathname === "/join");
     if (isJoinPage) return;
     if (pathname !== "/") return;
-    // 唯一规则：已认证 → 主界面；未认证 → 登录。不经过员工选择。
     if (!isAuthenticated) {
       router.replace("/login" as import("expo-router").Href);
       return;
     }
-    router.replace("/(app)/(home)/home" as Href);
-  }, [isVenueReady, isAuthenticated, pathname, router]);
+    // 老板首次进入：无 staff 记录则必须先完成 Onboarding（姓名+签名），再进入主界面。
+    const uid = venue?.uid;
+    if (!uid) {
+      router.replace("/(app)/(home)/home" as Href);
+      return;
+    }
+    const db = getFirestoreDb();
+    getDoc(doc(db, "users", uid)).then((snap) => {
+      if (!snap.exists()) {
+        router.replace("/join?owner=1" as Href);
+      } else {
+        router.replace("/(app)/(home)/home" as Href);
+      }
+    });
+  }, [isVenueReady, isAuthenticated, pathname, router, venue?.uid]);
 
   if (!fontsLoaded && !fontError) {
     return null;

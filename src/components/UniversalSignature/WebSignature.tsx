@@ -8,11 +8,12 @@ import SignatureCanvas from "react-signature-canvas";
 import { useTranslation } from "react-i18next";
 import { universalSignatureStyles } from "./index.styles";
 import type { UniversalSignatureViewRef, UniversalSignatureProps } from "./types";
+import { validateSignatureCanvas } from "./signatureValidation";
 
 export const WebSignature = forwardRef<
   UniversalSignatureViewRef,
   UniversalSignatureProps
->(function WebSignature({ onOK, onEmpty }, ref) {
+>(function WebSignature({ onOK, onEmpty, onTooSimple }, ref) {
   const { t } = useTranslation();
   const canvasRef = useRef<SignatureCanvas>(null);
 
@@ -26,6 +27,18 @@ export const WebSignature = forwardRef<
       }
       const trimmed = pad.getTrimmedCanvas();
       const dataUrl = trimmed.toDataURL("image/png");
+      if (!validateSignatureCanvas(trimmed)) {
+        // Web: Alert.alert with buttons is no-op; use window.confirm. OK = 确认继续, Cancel = 重签
+        const continueAnyway =
+          typeof window !== "undefined" &&
+          window.confirm(t("auth.signature_too_simple_confirm"));
+        if (continueAnyway) {
+          onOK?.(dataUrl);
+        } else {
+          onTooSimple?.();
+        }
+        return;
+      }
       onOK?.(dataUrl);
     },
     clearSignature: () => canvasRef.current?.clear(),

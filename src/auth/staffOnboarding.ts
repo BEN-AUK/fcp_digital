@@ -64,7 +64,8 @@ export async function getDeviceId(): Promise<string> {
 /**
  * Write staff onboarding attestation to Firestore.
  * Collection: top-level "users". Doc ID = staffId. All writes carry venueId for security.
- * Fields: displayName, signature (base64), deviceId, created_at (serverTimestamp), is_owner: false, venueId.
+ * Fields: displayName, signature (base64), deviceId, created_at (serverTimestamp), is_owner, venueId.
+ * is_owner: true when staffId === venueId (owner); otherwise false.
  * Caller must only persist to staffStore and navigate after this succeeds.
  */
 export async function saveStaffOnboarding(
@@ -72,12 +73,13 @@ export async function saveStaffOnboarding(
 ): Promise<void> {
   const db = getFirestoreDb();
   const userRef = doc(db, "users", payload.staffId);
+  const isOwner = payload.staffId === payload.venueId;
   const userData: UserWrite = {
     displayName: payload.displayName.trim(),
     signature: payload.signature,
     deviceId: payload.deviceId,
     created_at: serverTimestamp(),
-    is_owner: false,
+    is_owner: isOwner,
     venueId: payload.venueId,
     staffId: payload.staffId,
   };

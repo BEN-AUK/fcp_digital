@@ -3,19 +3,38 @@
  * Only loaded when Platform.OS !== 'web' to avoid pulling in react-native-webview on web.
  */
 import React, { forwardRef } from "react";
-import { View, Text, Pressable } from "react-native";
+import { View, Text, Pressable, Alert } from "react-native";
 import SignatureScreen from "react-native-signature-canvas";
 import type { SignatureViewRef } from "react-native-signature-canvas";
 import { useTranslation } from "react-i18next";
 import { universalSignatureStyles } from "./index.styles";
 import type { UniversalSignatureViewRef, UniversalSignatureProps } from "./types";
+import { validateSignatureBase64 } from "./signatureValidation";
 
 export const NativeSignature = forwardRef<
   UniversalSignatureViewRef,
   UniversalSignatureProps
->(function NativeSignature({ onOK, onEmpty }, ref) {
+>(function NativeSignature({ onOK, onEmpty, onTooSimple }, ref) {
   const { t } = useTranslation();
   const nativeRef = React.useRef<SignatureViewRef>(null);
+
+  const handleOK = React.useCallback(
+    (signature: string) => {
+      if (!validateSignatureBase64(signature)) {
+        Alert.alert(
+          "",
+          t("auth.signature_too_simple_confirm"),
+          [
+            { text: t("auth.signature_resign"), onPress: () => onTooSimple?.() },
+            { text: t("auth.signature_continue_anyway"), onPress: () => onOK?.(signature) },
+          ]
+        );
+        return;
+      }
+      onOK?.(signature);
+    },
+    [onOK, onTooSimple, t]
+  );
 
   React.useImperativeHandle(ref, () => ({
     readSignature: () => nativeRef.current?.readSignature(),
@@ -29,7 +48,7 @@ export const NativeSignature = forwardRef<
       <View style={universalSignatureStyles.container}>
         <SignatureScreen
           ref={nativeRef}
-          onOK={onOK}
+          onOK={handleOK}
           onEmpty={onEmpty}
           descriptionText=""
           clearText=""

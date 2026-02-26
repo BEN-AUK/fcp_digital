@@ -46,7 +46,11 @@
     "joinSubmitSuccess": "Submitted successfully",
     "joinSubmitError": "Failed to save. Please try again.",
     "joinErrorNameRequired": "Please enter your name",
-    "joinErrorSignatureRequired": "Please provide your signature"
+    "joinErrorSignatureRequired": "Please provide your signature",
+    "signature_too_simple": "Signature is too simple. Please write your full signature.",
+    "signature_too_simple_confirm": "Signature is too simple. Continue anyway?",
+    "signature_continue_anyway": "Continue anyway",
+    "signature_resign": "Re-sign"
   },
   "common": {
     "confirm": "Confirm",

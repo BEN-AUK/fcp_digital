@@ -46,7 +46,11 @@
     "joinSubmitSuccess": "提交成功",
     "joinSubmitError": "保存失败，请重试。",
     "joinErrorNameRequired": "请输入姓名",
-    "joinErrorSignatureRequired": "请完成手写签名"
+    "joinErrorSignatureRequired": "请完成手写签名",
+    "signature_too_simple": "签名过于简单，请重新书写。",
+    "signature_too_simple_confirm": "签名过于简单，确认继续？",
+    "signature_continue_anyway": "确认继续",
+    "signature_resign": "重签"
   },
   "common": {
     "confirm": "确认",
