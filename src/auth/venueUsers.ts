@@ -1,30 +1,19 @@
-import {
-  collection,
-  doc,
-  query,
-  where,
-  onSnapshot,
-  updateDoc,
-} from "firebase/firestore";
-import { getFirestoreDb } from "@/config/firebase";
+import { query, where, onSnapshot, updateDoc } from "firebase/firestore";
+import { getStaffCol, getStaffDoc } from "@/config/dbPaths";
 import type { User } from "@/models";
 
 export type VenueUserRecord = Pick<User, "staffId" | "displayName">;
 
 /**
  * Subscribe to active users for a venue (isActive === true).
- * Returns unsubscribe function.
+ * Path: venues/{venueId}/users. Returns unsubscribe function.
  */
 export function subscribeActiveUsers(
   venueId: string,
   onUpdate: (users: VenueUserRecord[]) => void
 ): () => void {
-  const db = getFirestoreDb();
-  const q = query(
-    collection(db, "users"),
-    where("venueId", "==", venueId),
-    where("isActive", "==", true)
-  );
+  const colRef = getStaffCol(venueId);
+  const q = query(colRef, where("isActive", "==", true));
   const unsubscribe = onSnapshot(q, (snap) => {
     const users: VenueUserRecord[] = snap.docs.map((d) => {
       const data = d.data() as User;
@@ -40,9 +29,10 @@ export function subscribeActiveUsers(
 
 /**
  * Soft-delete: set user's isActive to false. Does not delete the document.
+ * Path: venues/{venueId}/users/{staffId}.
  */
-export async function deactivateUser(staffId: string): Promise<void> {
-  const db = getFirestoreDb();
-  const userRef = doc(db, "users", staffId);
+export async function deactivateUser(venueId: string, staffId: string): Promise<void> {
+  if (!venueId?.trim()) return;
+  const userRef = getStaffDoc(venueId, staffId);
   await updateDoc(userRef, { isActive: false });
 }

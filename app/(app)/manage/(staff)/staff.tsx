@@ -27,9 +27,10 @@ export default function ManageStaffScreen() {
   }, [venue?.venueId]);
 
   const handleRemove = (user: VenueUserRecord) => {
+    if (!venue?.venueId) return;
     const message = t("manage.remove_staff_confirm");
     const doDeactivate = () => {
-      deactivateUser(user.staffId).catch(() => {});
+      deactivateUser(venue.venueId, user.staffId).catch(() => {});
     };
     if (Platform.OS === "web") {
       if (typeof window !== "undefined" && window.confirm(message)) {

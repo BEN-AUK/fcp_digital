@@ -69,7 +69,7 @@
     "generated_link_label": "生成的链接",
     "staff_list_title": "员工列表",
     "remove_staff": "移除",
-    "remove_staff_confirm": "确定将此员工从列表中移除？他们将不再显示为在岗。"
+    "remove_staff_confirm": "确认删除吗？"
   },
   "tabs": {
     "quick_record": "快速记录",

@@ -69,7 +69,7 @@
     "generated_link_label": "Generated link",
     "staff_list_title": "Staff list",
     "remove_staff": "Remove",
-    "remove_staff_confirm": "Remove this staff from the list? They will no longer appear as active."
+    "remove_staff_confirm": "Confirm delete?"
   },
   "tabs": {
     "quick_record": "Quick Record",

@@ -1,17 +1,7 @@
 import { Linking } from "react-native";
-import {
-  collection,
-  doc,
-  getDoc,
-  setDoc,
-  updateDoc,
-  serverTimestamp,
-  query,
-  where,
-  onSnapshot,
-  Timestamp,
-} from "firebase/firestore";
+import { doc, getDoc, setDoc, updateDoc, serverTimestamp, onSnapshot, Timestamp } from "firebase/firestore";
 import { getFirestoreDb } from "@/config/firebase";
+import { getInviteCol, getInviteDoc } from "@/config/dbPaths";
 import type { Invite, InviteStatus, InviteWrite, Venue } from "@/models";
 
 const INVITE_EXPIRY_DAYS = 7;
@@ -138,26 +128,28 @@ export type ValidatedInvite = {
 };
 
 /**
- * Validate invite token against Firestore invites collection.
+ * Validate invite token against Firestore subcollection venues/{venueId}/invites/{token}.
  * Accepts both legacy (expiresAt) and staff-invite (status) doc shapes.
+ * Caller must supply venueId (e.g. from Mode B token payload).
  */
-export async function validateInviteToken(token: string): Promise<ValidatedInvite | null> {
-  if (!token?.trim()) return null;
-  const db = getFirestoreDb();
-  const inviteRef = doc(db, "invites", token.trim());
+export async function validateInviteToken(
+  venueId: string,
+  token: string
+): Promise<ValidatedInvite | null> {
+  if (!venueId?.trim() || !token?.trim()) return null;
+  const inviteRef = getInviteDoc(venueId, token.trim());
   const snap = await getDoc(inviteRef);
   if (!snap.exists()) return null;
   const data = snap.data() as Invite | undefined;
-  const venueId = data?.venueId;
   const status = data?.status;
   const expiresAt = data?.expiresAt;
-  if (!venueId) return null;
   // 仅允许 status === "pending" 的链接进入加入流程；active/completed 视为已使用
   if (status != null && status !== "pending") return null;
   const validByExpiry = expiresAt && expiresAt.toMillis() > Date.now();
   const validByStatus = status === "pending";
   if (!validByExpiry && !validByStatus) return null;
 
+  const db = getFirestoreDb();
   const venueRef = doc(db, "venues", venueId);
   const venueSnap = await getDoc(venueRef);
   const venueData = venueSnap.exists() ? (venueSnap.data() as Venue) : undefined;
@@ -171,13 +163,17 @@ export async function validateInviteToken(token: string): Promise<ValidatedInvit
 }
 
 /**
- * Create a staff invite in Firestore (invites collection) and return the join URL.
- * Caller must pass current venueId (owner context). All writes carry venueId for security.
+ * Create a staff invite in Firestore (venues/{venueId}/invites) and return the join URL.
+ * Uses Mode B link (base64 payload with venueId) so join can validate without knowing venueId from elsewhere.
+ * Caller may pass venueName for display; if omitted, join will load it from Firestore.
  */
-export async function createStaffInvite(venueId: string): Promise<{ url: string; token: string }> {
-  const db = getFirestoreDb();
+export async function createStaffInvite(
+  venueId: string,
+  venueName?: string
+): Promise<{ url: string; token: string }> {
+  if (!venueId?.trim()) throw new Error("venueId required");
   const token = randomToken16();
-  const ref = doc(db, "invites", token);
+  const ref = getInviteDoc(venueId, token);
   const inviteData: InviteWrite = {
     inviteId: generateInviteId(),
     venueId,
@@ -186,22 +182,20 @@ export async function createStaffInvite(venueId: string): Promise<{ url: string;
     createdAt: serverTimestamp(),
   };
   await setDoc(ref, inviteData);
-  return { url: `${JOIN_BASE_URL}/join?t=${token}`, token };
+  const url = generateInviteLink(token, token, venueId, venueName);
+  return { url, token };
 }
 
 /**
  * Subscribe to all staff invites for a venue (real-time list). Returns unsubscribe.
+ * Path: venues/{venueId}/invites.
  */
 export function subscribeStaffInvites(
   venueId: string,
   onUpdate: (invites: StaffInviteRecord[]) => void
 ): () => void {
-  const db = getFirestoreDb();
-  const q = query(
-    collection(db, "invites"),
-    where("venueId", "==", venueId)
-  );
-  const unsubscribe = onSnapshot(q, (snap) => {
+  const colRef = getInviteCol(venueId);
+  const unsubscribe = onSnapshot(colRef, (snap) => {
     const invites: StaffInviteRecord[] = snap.docs.map((d) => {
       const dta = d.data() as Invite;
       return {
@@ -219,9 +213,9 @@ export function subscribeStaffInvites(
 /**
  * Revoke a staff invite by setting status to "revoked". Doc must belong to caller's venue (enforce via rules).
  */
-export async function revokeStaffInvite(token: string): Promise<void> {
-  const db = getFirestoreDb();
-  const ref = doc(db, "invites", token);
+export async function revokeStaffInvite(venueId: string, token: string): Promise<void> {
+  if (!venueId?.trim()) return;
+  const ref = getInviteDoc(venueId, token);
   await updateDoc(ref, { status: "revoked" });
 }
 
@@ -229,28 +223,29 @@ export async function revokeStaffInvite(token: string): Promise<void> {
  * Mark a staff invite as "completed" after staff has completed join. Used by /join flow.
  * Ensures each invite URL can only be used once.
  */
-export async function setInviteCompleted(token: string): Promise<void> {
-  const db = getFirestoreDb();
-  const ref = doc(db, "invites", token);
+export async function setInviteCompleted(venueId: string, token: string): Promise<void> {
+  if (!venueId?.trim()) return;
+  const ref = getInviteDoc(venueId, token);
   await updateDoc(ref, { status: "completed" });
 }
 
 /**
- * Create an invite document in Firestore (invites collection).
+ * Create an invite document in Firestore (venues/{venueId}/invites).
  * Uses doc id as token. Caller must have venueId (owner context).
  */
 export async function createInvite(venueId: string): Promise<{ token: string }> {
-  const db = getFirestoreDb();
-  const ref = doc(collection(db, "invites"));
+  if (!venueId?.trim()) throw new Error("venueId required");
+  const token = randomToken16();
+  const ref = getInviteDoc(venueId, token);
   const expiresAt = Timestamp.fromMillis(
     Date.now() + INVITE_EXPIRY_DAYS * 24 * 60 * 60 * 1000
   );
   const inviteData: InviteWrite = {
     inviteId: generateInviteId(),
     venueId,
-    token: ref.id,
+    token,
     expiresAt,
   };
   await setDoc(ref, inviteData);
-  return { token: ref.id };
+  return { token };
 }

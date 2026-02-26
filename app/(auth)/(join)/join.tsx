@@ -31,6 +31,7 @@ import { useStaffStore } from "@/stores/staffStore";
 import { useVenueStore } from "@/stores/venueStore";
 import { doc, getDoc } from "firebase/firestore";
 import { getFirestoreDb } from "@/config/firebase";
+import { getStaffDoc } from "@/config/dbPaths";
 import type { StaffContext } from "@/types/auth";
 import { UniversalSignature } from "@/components/UniversalSignature";
 import type { UniversalSignatureViewRef } from "@/components/UniversalSignature";
@@ -94,33 +95,6 @@ export default function JoinScreen() {
         return;
       }
 
-      const validated = await validateInviteToken(tokenValue);
-      if (cancelled) return;
-      if (validated) {
-        const db = getFirestoreDb();
-        const userRef = doc(db, "users", validated.staffId);
-        const userSnap = await getDoc(userRef);
-        if (cancelled) return;
-        if (userSnap.exists()) {
-          if (!cancelled) {
-            setErrorReason("used");
-            setStatus("error");
-          }
-          return;
-        }
-        if (!cancelled) {
-          setToken(tokenValue);
-          setInviteContext({
-            staffId: validated.staffId,
-            venueId: validated.venueId,
-            venueName: validated.venueName,
-          });
-          setErrorReason(null);
-          setStatus("form");
-        }
-        return;
-      }
-
       const payload = parseInviteTokenPayload(tokenValue);
       if (cancelled) return;
       if (!payload?.venueId) {
@@ -130,8 +104,20 @@ export default function JoinScreen() {
         }
         return;
       }
-      const db = getFirestoreDb();
-      const userRef = doc(db, "users", payload.staffId);
+
+      // Mode B: invite doc id is payload.staffId (16-char token); URL param t is base64 payload.
+      const inviteToken = payload.venueId ? payload.staffId : tokenValue;
+      const validated = await validateInviteToken(payload.venueId, inviteToken);
+      if (cancelled) return;
+      if (!validated) {
+        if (!cancelled) {
+          setErrorReason("invalid");
+          setStatus("error");
+        }
+        return;
+      }
+
+      const userRef = getStaffDoc(validated.venueId, validated.staffId);
       const userSnap = await getDoc(userRef);
       if (cancelled) return;
       if (userSnap.exists()) {
@@ -142,11 +128,11 @@ export default function JoinScreen() {
         return;
       }
       if (!cancelled) {
-        setToken(tokenValue);
+        setToken(inviteToken);
         setInviteContext({
-          staffId: payload.staffId,
-          venueId: payload.venueId,
-          venueName: payload.venueName ?? payload.venueId,
+          staffId: validated.staffId,
+          venueId: validated.venueId,
+          venueName: validated.venueName,
         });
         setErrorReason(null);
         setStatus("form");
@@ -174,19 +160,20 @@ export default function JoinScreen() {
       return;
     }
 
+    if (!ctx.venueId) return;
     setStatus("submitting");
     setSubmitError(null);
     (async () => {
       try {
         const deviceId = await getDeviceId();
-        await saveStaffOnboarding({
+        await saveStaffOnboarding(ctx.venueId, {
           staffId: ctx.staffId,
           venueId: ctx.venueId,
           displayName: pending.displayName.trim(),
           signature,
           deviceId,
         });
-        if (token) setInviteCompleted(token).catch(() => {});
+        if (token && ctx.venueId) setInviteCompleted(ctx.venueId, token).catch(() => {});
 
         const staff: StaffContext = {
           staffId: ctx.staffId,

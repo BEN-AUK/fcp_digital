@@ -1,6 +1,6 @@
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { setDoc, serverTimestamp } from "firebase/firestore";
 import * as Device from "expo-device";
-import { getFirestoreDb } from "@/config/firebase";
+import { getStaffDoc } from "@/config/dbPaths";
 import type { UserWrite } from "@/models";
 
 export type StaffOnboardingPayload = {
@@ -63,16 +63,17 @@ export async function getDeviceId(): Promise<string> {
 
 /**
  * Write staff onboarding attestation to Firestore.
- * Collection: top-level "users". Doc ID = staffId. All writes carry venueId for security.
+ * Path: venues/{venueId}/users/{staffId}. All writes carry venueId for security.
  * Fields: displayName, signature (base64), deviceId, created_at (serverTimestamp), is_owner, venueId.
  * is_owner: true when staffId === venueId (owner); otherwise false.
  * Caller must only persist to staffStore and navigate after this succeeds.
  */
 export async function saveStaffOnboarding(
+  venueId: string,
   payload: StaffOnboardingPayload
 ): Promise<void> {
-  const db = getFirestoreDb();
-  const userRef = doc(db, "users", payload.staffId);
+  if (!venueId?.trim()) return;
+  const userRef = getStaffDoc(venueId, payload.staffId);
   const isOwner = payload.staffId === payload.venueId;
   const userData: UserWrite = {
     displayName: payload.displayName.trim(),
