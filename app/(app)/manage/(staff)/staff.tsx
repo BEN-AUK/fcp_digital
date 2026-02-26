@@ -28,6 +28,8 @@ function getStatusKey(status: StaffInviteRecord["status"]): string {
       return "auth.inviteStatusPending";
     case "active":
       return "auth.inviteStatusActive";
+    case "completed":
+      return "auth.inviteStatusCompleted";
     case "revoked":
       return "auth.inviteStatusRevoked";
     default:

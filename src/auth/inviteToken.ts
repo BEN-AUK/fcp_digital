@@ -39,7 +39,7 @@ export type StaffInviteRecord = {
   id: string;
   token: string;
   staffName: string;
-  status: "pending" | "active" | "revoked";
+  status: "pending" | "active" | "completed" | "revoked";
   createdAt?: Timestamp;
 };
 
@@ -137,8 +137,10 @@ export async function validateInviteToken(token: string): Promise<ValidatedInvit
   const status = data?.status as string | undefined;
   const expiresAt = data?.expiresAt as Timestamp | undefined;
   if (!venueId) return null;
+  // 仅允许 status === "pending" 的链接进入加入流程；active/completed 视为已使用
+  if (status != null && status !== "pending") return null;
   const validByExpiry = expiresAt && expiresAt.toMillis() > Date.now();
-  const validByStatus = status === "pending" || status === "active";
+  const validByStatus = status === "pending";
   if (!validByExpiry && !validByStatus) return null;
 
   const venueRef = doc(db, "venues", venueId);
@@ -214,12 +216,13 @@ export async function revokeStaffInvite(token: string): Promise<void> {
 }
 
 /**
- * Mark a staff invite as "active" after staff has completed join. Used by /join flow.
+ * Mark a staff invite as "completed" after staff has completed join. Used by /join flow.
+ * Ensures each invite URL can only be used once.
  */
-export async function setInviteActive(token: string): Promise<void> {
+export async function setInviteCompleted(token: string): Promise<void> {
   const db = getFirestoreDb();
   const ref = doc(db, "invites", token);
-  await updateDoc(ref, { status: "active" });
+  await updateDoc(ref, { status: "completed" });
 }
 
 /**

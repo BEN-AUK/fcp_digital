@@ -77,4 +77,16 @@ export const joinStyles = StyleSheet.create({
     color: "#FF3B30",
     textAlign: "center",
   },
+  successOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(255,255,255,0.95)",
+    zIndex: 10,
+  },
+  successText: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#34C759",
+  },
 });

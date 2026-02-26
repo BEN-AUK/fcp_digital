@@ -17,7 +17,7 @@ export default function IndexScreen() {
       router.replace("/(auth)/login");
       return;
     }
-    router.replace("/(app)" as Href);
+    router.replace("/(app)/(home)/home" as Href);
   }, [isVenueReady, isAuthenticated, router]);
 
   return (

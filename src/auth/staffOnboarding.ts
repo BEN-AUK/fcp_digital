@@ -10,9 +10,33 @@ export type StaffOnboardingPayload = {
   deviceId: string;
 };
 
+const UNRELIABLE_DEVICE_IDS = new Set(["unknown", "web-unknown", ""]);
+
+function randomUUID(): string {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  const hex = "0123456789abcdef";
+  let s = "";
+  const arr = new Uint8Array(16);
+  if (typeof crypto !== "undefined" && crypto.getRandomValues) {
+    crypto.getRandomValues(arr);
+  } else {
+    for (let i = 0; i < 16; i++) arr[i] = Math.floor(Math.random() * 256);
+  }
+  arr[6] = (arr[6]! & 0x0f) | 0x40;
+  arr[8] = (arr[8]! & 0x3f) | 0x80;
+  for (let i = 0; i < 16; i++) {
+    s += hex[arr[i]! >> 4] + hex[arr[i]! & 0x0f];
+    if (i === 3 || i === 5 || i === 7 || i === 9) s += "-";
+  }
+  return s;
+}
+
 /**
  * Get a stable device identifier for attestation.
  * Prefer osBuildId (Android/iOS) or modelId (iOS), fallback to designName/deviceName or constant for web.
+ * If none available (e.g. "unknown" / "web-unknown"), returns a random UUID so submission can proceed.
  */
 export async function getDeviceId(): Promise<string> {
   try {
@@ -20,15 +44,19 @@ export async function getDeviceId(): Promise<string> {
     const modelId = Device.modelId ?? null;
     const designName = Device.designName ?? null;
     const deviceName = Device.deviceName ?? null;
-    return (
+    const raw =
       osBuildId ??
       modelId ??
       designName ??
       deviceName ??
-      "web-unknown"
-    );
+      "web-unknown";
+    const trimmed = raw?.trim() ?? "";
+    if (UNRELIABLE_DEVICE_IDS.has(trimmed) || !trimmed) {
+      return randomUUID();
+    }
+    return trimmed;
   } catch {
-    return "unknown";
+    return randomUUID();
   }
 }
 

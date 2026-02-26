@@ -34,6 +34,8 @@
     "inviteStatusRevoked": "Revoked",
     "revoke": "Revoke",
     "joinInvalidToken": "Invalid or expired invite link",
+    "joinLinkUsed": "This invitation link has already been used. Please ask your manager for a new one.",
+    "inviteStatusCompleted": "Completed",
     "joinBinding": "Binding to venue...",
     "joinOnboardingTitle": "Staff onboarding",
     "joinDisplayNameLabel": "Full name (real name)",
@@ -41,6 +43,7 @@
     "joinSignatureLabel": "Handwritten signature",
     "signatureClear": "Clear",
     "joinSubmit": "Submit and enter",
+    "joinSubmitSuccess": "Submitted successfully",
     "joinSubmitError": "Failed to save. Please try again.",
     "joinErrorNameRequired": "Please enter your name",
     "joinErrorSignatureRequired": "Please provide your signature"

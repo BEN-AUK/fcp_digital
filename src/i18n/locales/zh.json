@@ -34,6 +34,8 @@
     "inviteStatusRevoked": "已撤销",
     "revoke": "撤销",
     "joinInvalidToken": "邀请链接无效或已过期",
+    "joinLinkUsed": "该邀请链接已被使用，请向管理员索取新链接。",
+    "inviteStatusCompleted": "已完成",
     "joinBinding": "正在绑定场馆...",
     "joinOnboardingTitle": "员工入职",
     "joinDisplayNameLabel": "真实姓名",
@@ -41,6 +43,7 @@
     "joinSignatureLabel": "手写签名",
     "signatureClear": "清除",
     "joinSubmit": "提交并进入",
+    "joinSubmitSuccess": "提交成功",
     "joinSubmitError": "保存失败，请重试。",
     "joinErrorNameRequired": "请输入姓名",
     "joinErrorSignatureRequired": "请完成手写签名"

@@ -24,10 +24,12 @@ import {
   getJoinTokenFromUrl,
   validateInviteToken,
   parseInviteTokenPayload,
-  setInviteActive,
+  setInviteCompleted,
 } from "@/auth/inviteToken";
 import { saveStaffOnboarding, getDeviceId } from "@/auth/staffOnboarding";
 import { useStaffStore } from "@/stores/staffStore";
+import { doc, getDoc } from "firebase/firestore";
+import { getFirestoreDb } from "@/config/firebase";
 import type { StaffContext } from "@/types/auth";
 import { UniversalSignature } from "@/components/UniversalSignature";
 import type { UniversalSignatureViewRef } from "@/components/UniversalSignature";
@@ -46,10 +48,12 @@ export default function JoinScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ t?: string }>();
   const [status, setStatus] = useState<"loading" | "error" | "form" | "submitting">("loading");
+  const [errorReason, setErrorReason] = useState<"invalid" | "used" | null>(null);
   const [inviteContext, setInviteContext] = useState<InviteContext | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [displayName, setDisplayName] = useState("");
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [showSuccess, setShowSuccess] = useState(false);
   const sigRef = useRef<UniversalSignatureViewRef>(null);
   const setStaff = useStaffStore((s) => s.setStaff);
   /** When user taps Submit we request signature; onOK reads this and runs save */
@@ -63,13 +67,27 @@ export default function JoinScreen() {
         typeof params.t === "string" ? params.t : await getJoinTokenFromUrl();
       const tokenValue = raw?.trim() ? decodeURIComponent(raw.trim()) : null;
       if (!tokenValue) {
-        if (!cancelled) setStatus("error");
+        if (!cancelled) {
+          setErrorReason("invalid");
+          setStatus("error");
+        }
         return;
       }
 
       const validated = await validateInviteToken(tokenValue);
       if (cancelled) return;
       if (validated) {
+        const db = getFirestoreDb();
+        const userRef = doc(db, "users", validated.staffId);
+        const userSnap = await getDoc(userRef);
+        if (cancelled) return;
+        if (userSnap.exists()) {
+          if (!cancelled) {
+            setErrorReason("used");
+            setStatus("error");
+          }
+          return;
+        }
         if (!cancelled) {
           setToken(tokenValue);
           setInviteContext({
@@ -79,6 +97,7 @@ export default function JoinScreen() {
             initialDisplayName: validated.staffName,
           });
           setDisplayName(validated.staffName || "");
+          setErrorReason(null);
           setStatus("form");
         }
         return;
@@ -87,7 +106,21 @@ export default function JoinScreen() {
       const payload = parseInviteTokenPayload(tokenValue);
       if (cancelled) return;
       if (!payload?.venueId) {
-        if (!cancelled) setStatus("error");
+        if (!cancelled) {
+          setErrorReason("invalid");
+          setStatus("error");
+        }
+        return;
+      }
+      const db = getFirestoreDb();
+      const userRef = doc(db, "users", payload.staffId);
+      const userSnap = await getDoc(userRef);
+      if (cancelled) return;
+      if (userSnap.exists()) {
+        if (!cancelled) {
+          setErrorReason("used");
+          setStatus("error");
+        }
         return;
       }
       if (!cancelled) {
@@ -99,6 +132,7 @@ export default function JoinScreen() {
           initialDisplayName: payload.displayName,
         });
         setDisplayName(payload.displayName || "");
+        setErrorReason(null);
         setStatus("form");
       }
     }
@@ -129,7 +163,7 @@ export default function JoinScreen() {
           signature,
           deviceId,
         });
-        setInviteActive(token).catch(() => {});
+        setInviteCompleted(token).catch(() => {});
 
         const staff: StaffContext = {
           staffId: ctx.staffId,
@@ -140,7 +174,11 @@ export default function JoinScreen() {
           deviceId,
         };
         setStaff(staff);
-        router.replace("/(app)/home");
+        setShowSuccess(true);
+        setTimeout(() => {
+          setShowSuccess(false);
+          router.replace("/(app)/(home)/home");
+        }, 1000);
       } catch {
         setStatus("form");
         setSubmitError(t("auth.joinSubmitError"));
@@ -171,7 +209,9 @@ export default function JoinScreen() {
   if (status === "error") {
     return (
       <View style={joinStyles.errorBox}>
-        <Text style={joinStyles.errorText}>{t("auth.joinInvalidToken")}</Text>
+        <Text style={joinStyles.errorText}>
+          {errorReason === "used" ? t("auth.joinLinkUsed") : t("auth.joinInvalidToken")}
+        </Text>
       </View>
     );
   }
@@ -241,6 +281,11 @@ export default function JoinScreen() {
             )}
           </Pressable>
         </ScrollView>
+        {showSuccess ? (
+          <View style={joinStyles.successOverlay} accessibilityLiveRegion="polite">
+            <Text style={joinStyles.successText as TextStyle}>{t("auth.joinSubmitSuccess")}</Text>
+          </View>
+        ) : null}
       </KeyboardAvoidingView>
     );
   }

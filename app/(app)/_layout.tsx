@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Tabs } from "expo-router";
+import { Tabs, usePathname, Redirect } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { View, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -40,12 +40,21 @@ function TabIcon({
 
 export default function AppLayout() {
   const { t } = useTranslation();
+  const pathname = usePathname();
   const isVenueOwner = useVenueStore((s) => s.isAuthenticated);
   const language = useSettingsStore((s) => s.language);
 
   useEffect(() => {
     i18n.changeLanguage(language);
   }, [language]);
+
+  // 访问 /(app) 无子路径时重定向到首页，避免 Unmatched Route
+  const isAppRoot =
+    pathname === "/(app)" ||
+    (typeof window !== "undefined" && window.location?.pathname === "/(app)");
+  if (isAppRoot) {
+    return <Redirect href="/(app)/(home)/home" />;
+  }
 
   return (
     <Tabs

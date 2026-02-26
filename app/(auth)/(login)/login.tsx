@@ -23,7 +23,7 @@ export default function LoginScreen() {
     setLoading(true);
     try {
       await signIn(email.trim(), password);
-      router.replace("/(app)" as Href);
+      router.replace("/(app)/(home)/home" as Href);
     } catch (e) {
       setError(e instanceof Error ? e.message : t("auth.errorSignInFailed"));
     } finally {
