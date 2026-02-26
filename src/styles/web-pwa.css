@@ -1,0 +1,48 @@
+/**
+ * PWA 全局 Web 样式：顺滑感与全屏体验
+ * 仅用于 Web 平台，通过 _layout.web.tsx 按需注入。
+ * 如需禁止手动缩放，请确保 public/index.html 的 viewport meta 含：
+ * maximum-scale=1, user-scalable=no
+ */
+
+/* 安全区域：防止内容被刘海/圆角遮挡（含 iOS PWA） */
+body {
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  min-height: 100vh;
+  min-height: 100dvh;
+  box-sizing: border-box;
+}
+
+/* 禁用双击缩放，提升触控响应 */
+html,
+body {
+  touch-action: manipulation;
+}
+
+/* 隐藏滚动条但保持滚动功能 */
+html {
+  scrollbar-width: none;
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
+}
+body {
+  -ms-overflow-style: none;
+}
+
+/* 禁止用户手动缩放需在 HTML 中设置 viewport meta：maximum-scale=1, user-scalable=no */
+
+/* iOS：消除点击时的蓝色高亮 */
+html,
+body {
+  -webkit-tap-highlight-color: transparent;
+}
+button,
+a,
+input,
+select,
+textarea,
+[role="button"] {
+  -webkit-tap-highlight-color: transparent;
+}
