@@ -58,6 +58,11 @@ export default function ManageIndexScreen() {
     router.push("/manage/staff");
   };
 
+  const handleOpenStaffAuthorization = () => {
+    setShowMenu(false);
+    router.push("/manage/authorization");
+  };
+
   const handleDismiss = () => {
     setShowMenu(false);
   };
@@ -104,6 +109,31 @@ export default function ManageIndexScreen() {
                 />
                 <Text style={styles.menuItemText}>
                   {t("manage.manage_staff")}
+                </Text>
+                <Ionicons
+                  name="chevron-forward"
+                  size={20}
+                  color="#9CA3AF"
+                  style={styles.menuItemChevron}
+                />
+              </Pressable>
+              <Pressable
+                style={({ pressed }) => [
+                  styles.menuItem,
+                  pressed && styles.menuItemPressed,
+                ]}
+                onPress={handleOpenStaffAuthorization}
+                accessibilityRole="button"
+                accessibilityLabel={t("manage.staff_authorization")}
+              >
+                <Ionicons
+                  name="key-outline"
+                  size={22}
+                  color="#374151"
+                  style={styles.menuItemIcon}
+                />
+                <Text style={styles.menuItemText}>
+                  {t("manage.staff_authorization")}
                 </Text>
                 <Ionicons
                   name="chevron-forward"

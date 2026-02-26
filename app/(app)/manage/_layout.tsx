@@ -24,6 +24,16 @@ export default function ManageLayout() {
           header: () => null,
         }}
       />
+      <Stack.Screen
+        name="(auth)/authorization"
+        options={{
+          title: "",
+          presentation: "formSheet",
+          sheetGrabberVisible: true,
+          headerShown: false,
+          header: () => null,
+        }}
+      />
     </Stack>
   );
 }

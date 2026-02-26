@@ -62,7 +62,8 @@
     "welcomeMessage": "Hello World! Welcome, {{name}} from {{venueName}}"
   },
   "manage": {
-    "manage_staff": "Manage Staff"
+    "manage_staff": "Manage Staff",
+    "staff_authorization": "Staff Authorization"
   },
   "tabs": {
     "quick_record": "Quick Record",

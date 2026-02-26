@@ -62,7 +62,8 @@
     "welcomeMessage": "你好！欢迎，{{name}}，来自 {{venueName}}"
   },
   "manage": {
-    "manage_staff": "管理员工"
+    "manage_staff": "管理员工",
+    "staff_authorization": "员工授权"
   },
   "tabs": {
     "quick_record": "快速记录",

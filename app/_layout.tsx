@@ -1,19 +1,41 @@
 import "../src/i18n";
 import { useEffect } from "react";
-import { Stack, useRouter, usePathname, type Href } from "expo-router";
+import { Stack, useRouter, usePathname, useSegments, type Href } from "expo-router";
+import { View, ActivityIndicator, StyleSheet } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useFonts } from "expo-font";
 import { Ionicons } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 import { useVenueAuth } from "@/auth/useVenueAuth";
 import { fetchOwnerStaffFromCloud } from "@/auth/syncOwnerStaff";
 import { useVenueStore } from "@/stores/venueStore";
 import { useStaffStore } from "@/stores/staffStore";
 
+/** 加载态：Firebase 校验 Token 期间不挂载任何业务路由，防止闪烁或权限泄露 */
+function AuthLoadingScreen() {
+  const { t } = useTranslation();
+  return (
+    <View style={authLoadingStyles.container}>
+      <ActivityIndicator size="large" accessibilityLabel={t("common.loading")} />
+    </View>
+  );
+}
+
+const authLoadingStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
+
 export default function RootLayout() {
   const router = useRouter();
   const pathname = usePathname();
+  const segments = useSegments();
   useVenueAuth();
-  const isVenueReady = useVenueStore((s) => s.isReady);
+
+  const isReady = useVenueStore((s) => s.isReady);
   const isAuthenticated = useVenueStore((s) => s.isAuthenticated);
   const venue = useVenueStore((s) => s.venue);
   const staff = useStaffStore((s) => s.staff);
@@ -22,19 +44,38 @@ export default function RootLayout() {
     ...Ionicons.font,
   });
 
+  const isLoading = !isReady;
+  const path =
+    typeof window !== "undefined" ? window.location?.pathname ?? pathname : pathname;
+  const inAuthGroup =
+    segments[0] === "(auth)" ||
+    path === "/login" ||
+    path === "/register" ||
+    path.startsWith("/join");
+  const isAllowedUnauthenticated =
+    path === "/login" || path === "/register" || path === "/join" || path.startsWith("/join");
+
   useEffect(() => {
-    if (!isVenueReady) return;
-    // 授权链接 /join?t=xxx：允许未登录直接进入 join 页，完成后跳主界面。避免 usePathname 未同步时误判为 "/" 导致被重定向到登录。
-    const isJoinPage =
-      pathname === "/join" ||
-      (typeof window !== "undefined" && window.location?.pathname === "/join");
+    if (isLoading) return;
+
+    const currentPath =
+      typeof window !== "undefined" ? window.location?.pathname ?? pathname : pathname;
+    const isJoinPage = currentPath === "/join" || pathname === "/join";
+
     if (isJoinPage) return;
-    if (pathname !== "/") return;
-    if (!isAuthenticated) {
-      router.replace("/login" as import("expo-router").Href);
+
+    if (!isAuthenticated && !isAllowedUnauthenticated) {
+      router.replace("/login" as Href);
       return;
     }
-    // 老板：已有本地 staff 且 venue 一致则直接进首页；否则静默拉取云端 owner 记录并写入 staffStore，避免新设备重复 Onboarding。
+
+    if (isAuthenticated && inAuthGroup) {
+      router.replace("/(app)/(home)/home" as Href);
+      return;
+    }
+
+    if (pathname !== "/" && currentPath !== "/") return;
+
     const uid = venue?.uid;
     if (!uid) {
       router.replace("/(app)/(home)/home" as Href);
@@ -52,10 +93,30 @@ export default function RootLayout() {
         router.replace("/join?owner=1" as Href);
       }
     });
-  }, [isVenueReady, isAuthenticated, pathname, router, venue?.uid, venue?.venueId, staff]);
+  }, [
+    isLoading,
+    isAuthenticated,
+    inAuthGroup,
+    isAllowedUnauthenticated,
+    pathname,
+    path,
+    router,
+    venue?.uid,
+    venue?.venueId,
+    staff,
+  ]);
 
   if (!fontsLoaded && !fontError) {
     return null;
+  }
+
+  if (isLoading) {
+    return (
+      <>
+        <StatusBar style="auto" />
+        <AuthLoadingScreen />
+      </>
+    );
   }
 
   return (

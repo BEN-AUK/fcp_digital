@@ -1,3 +1,7 @@
+/**
+ * 受保护分组 (app)：仅负责 Tab 与内部路由。
+ * 鉴权与强制重定向由根目录 app/_layout.tsx 统一处理，此处不包含登录/登出跳转逻辑。
+ */
 import { useEffect } from "react";
 import { Tabs, usePathname, Redirect } from "expo-router";
 import { useTranslation } from "react-i18next";
