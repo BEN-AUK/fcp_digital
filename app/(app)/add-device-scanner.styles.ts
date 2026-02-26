@@ -1,26 +1,29 @@
-import { StyleSheet, Platform } from "react-native";
+import { StyleSheet } from "react-native";
 import { theme } from "@/styles/theme";
 
 const CAPTURE_BUTTON_SIZE = 70;
 const FOCUS_FRAME_SIZE = 240;
 
-/** Add Device Scanner: 黑色背景，相机预览 + 对焦框，底部操作区。 */
+/** Add Device Scanner: 黑色背景，相机预览 + 对焦框，底部操作区。响应式比例确保短屏下所有按钮可见。 */
 export const styles = StyleSheet.create({
   page: {
     flex: 1,
     backgroundColor: "#000000",
   },
+  pageInner: {
+    flex: 1,
+    width: "100%",
+  },
   cameraSection: {
-    flex: 8,
+    flex: 0.65,
     width: "100%",
     position: "relative",
     overflow: "hidden",
   },
   camera: {
-    flex: 1,
     width: "100%",
     height: "100%",
-    ...(Platform.OS === "web" ? { aspectRatio: 3 / 4 } : {}),
+    flex: 1,
   },
   focusFrameOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -37,12 +40,10 @@ export const styles = StyleSheet.create({
     backgroundColor: "transparent",
   },
   bottomSection: {
-    flex: 2,
+    flex: 0.35,
     width: "100%",
     paddingHorizontal: theme.spacing.l,
-    paddingTop: theme.spacing.s,
-    paddingBottom: theme.spacing.m,
-    justifyContent: "flex-start",
+    justifyContent: "space-evenly",
     alignItems: "center",
   },
   hint: {
@@ -50,7 +51,6 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     color: theme.colors.textOnDark,
     textAlign: "center",
-    marginBottom: theme.spacing.s,
     paddingHorizontal: theme.spacing.s,
   },
   switchButton: {
@@ -81,7 +81,6 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "transparent",
-    marginBottom: theme.spacing.m,
   },
   captureButtonInner: {
     width: CAPTURE_BUTTON_SIZE - 20,

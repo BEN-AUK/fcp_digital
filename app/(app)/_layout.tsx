@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { Tabs, usePathname, Redirect } from "expo-router";
 import { useTranslation } from "react-i18next";
 import { View, StyleSheet } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useVenueStore } from "@/stores/venueStore";
 import { useSettingsStore } from "@/stores/settingsStore";
@@ -44,6 +45,7 @@ function TabIcon({
 export default function AppLayout() {
   const { t } = useTranslation();
   const pathname = usePathname();
+  const insets = useSafeAreaInsets();
   const isVenueOwner = useVenueStore((s) => s.isAuthenticated);
   const language = useSettingsStore((s) => s.language);
 
@@ -59,21 +61,33 @@ export default function AppLayout() {
     return <Redirect href="/(app)/(home)/home" />;
   }
 
+  const tabBarHeight = 60 + insets.bottom;
+  const isScannerScreen =
+    pathname?.includes("add-device-scanner") === true ||
+    (typeof window !== "undefined" && window.location?.pathname?.includes("add-device-scanner"));
+  const tabBarStyle = isScannerScreen
+    ? { display: "none" as const }
+    : {
+        height: tabBarHeight,
+        paddingTop: theme.spacing.s,
+        paddingBottom: insets.bottom,
+        backgroundColor: theme.colors.tabBarBackground,
+        borderTopWidth: 0,
+      };
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: theme.colors.tabBarActive,
         tabBarInactiveTintColor: theme.colors.tabBarInactive,
-        tabBarStyle: {
-          height: 80,
-          paddingBottom: theme.spacing.l,
-          paddingTop: theme.spacing.s,
-          backgroundColor: theme.colors.tabBarBackground,
-          borderTopWidth: 0,
+        tabBarLabelPosition: "below-icon",
+        tabBarStyle,
+        tabBarItemStyle: {
+          paddingVertical: 8,
         },
         tabBarLabelStyle: {
-          fontSize: 12,
+          fontSize: 11,
           fontWeight: "500",
           marginTop: theme.spacing.xs,
         },
