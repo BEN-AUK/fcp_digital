@@ -35,6 +35,23 @@ function randomToken16(): string {
   return s;
 }
 
+/** Generate a UUID v4 for inviteId. Required for every document in invites collection. */
+function generateInviteId(): string {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  const arr = new Uint8Array(16);
+  if (typeof crypto !== "undefined" && crypto.getRandomValues) {
+    crypto.getRandomValues(arr);
+  } else {
+    for (let i = 0; i < 16; i++) arr[i] = Math.floor(Math.random() * 256);
+  }
+  arr[6] = (arr[6]! & 0x0f) | 0x40;
+  arr[8] = (arr[8]! & 0x3f) | 0x80;
+  const hex = Array.from(arr, (b) => b.toString(16).padStart(2, "0")).join("");
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+}
+
 /** Staff invite record (doc id + Invite fields) for real-time list. */
 export type StaffInviteRecord = {
   id: string;
@@ -160,17 +177,16 @@ export async function validateInviteToken(token: string): Promise<ValidatedInvit
 /**
  * Create a staff invite in Firestore (invites collection) and return the join URL.
  * Caller must pass current venueId (owner context). All writes carry venueId for security.
+ * Token and stored invite do not contain employee name; generic "Staff" is used.
  */
-export async function createStaffInvite(
-  venueId: string,
-  staffName: string
-): Promise<{ url: string; token: string }> {
+export async function createStaffInvite(venueId: string): Promise<{ url: string; token: string }> {
   const db = getFirestoreDb();
   const token = randomToken16();
   const ref = doc(db, "invites", token);
   const inviteData: InviteWrite = {
+    inviteId: generateInviteId(),
     venueId,
-    staffName: staffName.trim() || "Staff",
+    staffName: "Staff",
     token,
     status: "pending",
     createdAt: serverTimestamp(),
@@ -240,6 +256,7 @@ export async function createInvite(
     Date.now() + INVITE_EXPIRY_DAYS * 24 * 60 * 60 * 1000
   );
   const inviteData: InviteWrite = {
+    inviteId: generateInviteId(),
     venueId,
     staffName: staffName.trim() || "Staff",
     token: ref.id,

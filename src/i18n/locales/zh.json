@@ -65,7 +65,8 @@
     "manage_staff": "管理员工",
     "staff_authorization": "员工授权",
     "authorise_staff": "授权员工",
-    "generate_qr_code": "生成二维码"
+    "generate_qr_code": "生成二维码",
+    "generated_link_label": "生成的链接"
   },
   "tabs": {
     "quick_record": "快速记录",

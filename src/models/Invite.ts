@@ -8,6 +8,8 @@ import type { Timestamp, FieldValue } from "firebase/firestore";
 export type InviteStatus = "pending" | "active" | "completed" | "revoked";
 
 export interface Invite {
+  /** UUID, required for every document in invites collection. */
+  inviteId: string;
   venueId: string;
   staffName: string;
   token: string;

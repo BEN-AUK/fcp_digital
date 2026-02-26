@@ -40,8 +40,6 @@ type InviteContext = {
   staffId: string;
   venueId: string;
   venueName: string;
-  /** Pre-filled from invite (optional) */
-  initialDisplayName?: string;
 };
 
 export default function JoinScreen() {
@@ -116,9 +114,7 @@ export default function JoinScreen() {
             staffId: validated.staffId,
             venueId: validated.venueId,
             venueName: validated.venueName,
-            initialDisplayName: validated.staffName,
           });
-          setDisplayName(validated.staffName || "");
           setErrorReason(null);
           setStatus("form");
         }
@@ -151,9 +147,7 @@ export default function JoinScreen() {
           staffId: payload.staffId,
           venueId: payload.venueId,
           venueName: payload.venueName ?? payload.venueId,
-          initialDisplayName: payload.displayName,
         });
-        setDisplayName(payload.displayName || "");
         setErrorReason(null);
         setStatus("form");
       }
